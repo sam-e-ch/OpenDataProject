@@ -1,0 +1,31 @@
+.svg {
+    border: 1px solid #000;
+}
+
+.country {
+    fill: #cc8;
+    stroke: #000;
+    stroke-width: 0.5;
+}
+
+.canton-boundaries {
+    fill: none;
+    stroke: #fff;
+    stroke-width: 1;
+}
+ 
+.municipality-boundaries {
+    fill: none;
+    stroke: #fff;
+    stroke-width: .3;
+}
+
+.lake {
+    fill: #4477ff;
+    stroke: #00f;
+    stroke-width: .3;
+}
+
+.hidden {
+    opacity: 0;   
+}

@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<head>
+    <meta charset="utf-8">
+    <title>Swiss map</title>
+    
+    <link rel="stylesheet" type="text/css" href="css/style.css"> 
+    <link rel="stylesheet" type="text/css" href="css/vendor/bootstrap.min.css"> 
+    
+    <!-- Import libs -->
+    <script type="text/javascript" src="js/vendor/jquery-2.1.3.min.js"></script>      
+    <script src="http://d3js.org/d3.v3.min.js"></script>    
+    <script src="http://d3js.org/topojson.v1.min.js"></script>
+    <script src="js/vendor/bootstrap.min.js"></script>
+    
+    <!-- Import scripts -->
+    <script src="js/map.js"></script>
+</head>
+<body>   
+    <div class="row">
+        <div class="col-md-12">
+            <div class="container">
+                <nav class="navbar navbar-default">
+                    <a class="navbar-brand" href="/">D3 Test</a>
+                </nav>
+                <h1>Swiss map</h1>
+                <div id="map"></div>
+                <div class="panel panel-default">
+                  <div class="panel-body">
+                    <div class="col-md-4">
+                        <div class="checkbox">
+                            <label>
+                                <input id="toggleLakes" type="checkbox" checked="checked"> Toggle Lakes
+                            </label>
+                        </div>                   
+                    </div>
+                    <div class="col-md-4">
+                        <div class="checkbox">
+                            <label>
+                                <input id="toggleMunicipals" type="checkbox" checked="checked"> Toggle municipal boundaries
+                            </label>
+                        </div>                   
+                    </div>
+                    <div class="col-md-4">
+                        <div class="checkbox">
+                            <label>
+                                <input id="toggleCantons" type="checkbox" checked="checked"> Toggle canton boundaries
+                            </label>
+                        </div>                   
+                    </div>
+                  </div>
+                </div>                    
+                </div>                
+            </div>            
+        </div>
+    </div>
+                
+    
+</body>
