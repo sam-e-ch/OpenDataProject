@@ -1,3 +1,4 @@
 *.class
 data/
 node_modules/
+dataParser/
