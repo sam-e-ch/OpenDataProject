@@ -5,6 +5,9 @@ var dots = 0;
 var LineByLineReader = require('line-by-line');
 var rd;
 
+/*
+* Setting up the events for the task queue
+*/
 var events = require('events');
 var event = new events.EventEmitter();
 
@@ -14,7 +17,7 @@ event.on('taskComplete', function () { taskQueue(); });
 *Reads the data from the FPLAN file and writes the data used in the database.
 */
 var processDepartures = function () {
-    console.log('Processing departures...\n');
+    console.log('Processing departures... (This may take several hours!)\n');
     rd = new LineByLineReader('./data/FPLAN');    
     
     //This regexp matches the lines used
@@ -108,7 +111,8 @@ var openConnection = function() {
     connection = mysql.createConnection({
           host     : 'localhost',
           user     : 'root',
-          password : ''
+          password : '', 
+          database : 'openDataProject'
     });
 
     connection.connect(function(err) {
@@ -116,8 +120,6 @@ var openConnection = function() {
             console.error('error connecting: ' + err.stack);
             return;
           }
-
-          console.log('connected as id ' + connection.threadId);
     });
     event.emit('taskComplete');
 };
@@ -129,13 +131,7 @@ var closeConnection = function() {
 /*
 *Runs a query on the database
 */
-function runQuery(query){     
-    connection.query('USE openDataProject;', function(err, rows, fields) {
-        if (err){
-            console.log(query);
-            throw err; 
-        }
-    });
+function runQuery(query){
     connection.query(query, function(err, rows, fields) {
         if (err){
             console.log(query);
@@ -147,6 +143,9 @@ function runQuery(query){
     });
 }
 
+/*
+*Shows the loading 'animation'
+*/
 function loadingDots(){
       process.stdout.clearLine();  // clear current text
       process.stdout.cursorTo(0);  // move cursor to beginning of line
@@ -156,19 +155,8 @@ function loadingDots(){
 }
 
 /*
-*Gets a file
-*@return - returns the readline of the file
+*Build the task queue (with different modes)
 */
-function getFile(path){
-  var fs = require('fs'),
-    readline = require('readline');
-
-    return readline.createInterface({
-        input: fs.createReadStream(path),
-        output: process.stdout,
-        terminal: false
-    });    
-}
 
 if(process.argv[2]=='setup'){
     tasks.push(setupDB);
@@ -185,12 +173,17 @@ if(process.argv[2]=='departures'){
     tasks.push(processDepartures);
 }
 
+if(process.argv[2]=='trainstations'){
+    tasks.push(processTrainstations);
+}
+
 tasks.push(closeConnection);
 
-
+/*
+*Start the program by openig the connection. The taskQueue is processed afterwards.
+*/
 openConnection.call();
 function taskQueue(){ 
-    console.log('Starting task ' + taskNr);
     tasks[taskNr].call();
     taskNr++;
 }
