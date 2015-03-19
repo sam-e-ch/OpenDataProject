@@ -3,6 +3,7 @@ var tasks = [];
 var taskNr = 0;
 var dots = 0;
 var LineByLineReader = require('line-by-line');
+var rd;
 
 var events = require('events');
 var event = new events.EventEmitter();
@@ -14,7 +15,7 @@ event.on('taskComplete', function () { taskQueue(); });
 */
 var processDepartures = function () {
     console.log('Processing departures...\n');
-    var rd = new LineByLineReader('./data/FPLAN');    
+    rd = new LineByLineReader('./data/FPLAN');    
     
     //This regexp matches the lines used
     var patt = /^(\d{7}\s.{29}\d{5})/;
@@ -30,6 +31,7 @@ var processDepartures = function () {
             time = line.substring(37,43); 
             runQuery('INSERT INTO departures (trainstation, departure) VALUES (' + trainstation + ',' + time + ');');
             setTimeout(function(){ }, 1);
+            rd.pause();
         }	
     });
 
@@ -48,7 +50,7 @@ var processDepartures = function () {
 */
 var processTrainstations = function () {
     console.log('Proccessing Trainstations...\n');
-    var rd = new LineByLineReader('./data/BFKOORD');    
+    rd = new LineByLineReader('./data/BFKOORD');    
     
     //Cleanup table
     runQuery('DELETE FROM trainstations;');
@@ -62,6 +64,7 @@ var processTrainstations = function () {
         xKoord = line.substring(9,19);
         yKoord = line.substring(20,30);
         runQuery('INSERT INTO trainstations (trainstations_ID, x_koordinate, y_koordinate) VALUES (' + id + ',' + xKoord + ','+ yKoord + ');');
+        rd.pause();
     });
 
     rd.on('error', function(err) {
@@ -79,11 +82,12 @@ var processTrainstations = function () {
 */
 var setupDB = function() {
     console.log('Setting up database...\n');
-    var rd = new LineByLineReader('schema.sql'); 
+    rd = new LineByLineReader('schema.sql'); 
     
     rd.on('line', function(line) {
         loadingDots();
         runQuery(line);
+        rd.pause();
     });
 
     rd.on('error', function(err) {
@@ -104,7 +108,7 @@ var openConnection = function() {
     connection = mysql.createConnection({
           host     : 'localhost',
           user     : 'root',
-          password : '0815'
+          password : ''
     });
 
     connection.connect(function(err) {
@@ -136,6 +140,9 @@ function runQuery(query){
         if (err){
             console.log(query);
             throw err; 
+        }
+        if(rd){
+            rd.resume();   
         }
     });
 }
