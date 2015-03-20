@@ -3,21 +3,25 @@
 }
 
 .country {
-    fill: #cc8;
+    fill: none;
     stroke: #000;
     stroke-width: 0.5;
 }
 
 .canton-boundaries {
     fill: none;
-    stroke: #fff;
+    stroke: #888;
     stroke-width: 1;
-}
- 
+    stroke-linejoin: round;
+} 
 .municipality-boundaries {
     fill: none;
-    stroke: #fff;
+    stroke: #666;
     stroke-width: .3;
+}
+
+.municipalities{
+    fill: none;   
 }
 
 .lake {
@@ -29,3 +33,13 @@
 .hidden {
     opacity: 0;   
 }
+
+.q0-9 { fill: #41000E5); }
+.q1-9 { fill: #5000C9; }
+.q2-9 { fill: #6000AD; }
+.q3-9 { fill: #700092; }
+.q4-9 { fill: #800076; }
+.q5-9 { fill: #8F005A; }
+.q6-9 { fill: #9F003F; }
+.q7-9 { fill: #AF0023; }
+.q8-9 { fill: #BF0009; }
