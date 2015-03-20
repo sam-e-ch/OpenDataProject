@@ -7,7 +7,8 @@
     <link rel="stylesheet" type="text/css" href="css/vendor/bootstrap.min.css"> 
     
     <!-- Import libs -->
-    <script type="text/javascript" src="js/vendor/jquery-2.1.3.min.js"></script>      
+    <script type="text/javascript" src="js/vendor/jquery-2.1.3.min.js"></script>
+    <script src="//code.jquery.com/ui/1.11.4/jquery-ui.js"></script>
     <script src="http://d3js.org/d3.v3.min.js"></script>    
     <script src="http://d3js.org/topojson.v1.min.js"></script>
     <script src="http://d3js.org/queue.v1.min.js"></script>
@@ -24,7 +25,32 @@
                     <a class="navbar-brand" href="/">D3 Test</a>
                 </nav>
                 <h1>Swiss map</h1>
-                <div id="map"></div>
+                <div id="map">
+                    <div id="key">                        
+                        <div class="panel panel-default">
+                          <div class="panel-heading">
+                            <h3 class="panel-title">Key</h3>
+                          </div>
+                          <div class="panel-body">
+                            <p>
+                            <span class="q0-9 keyfield"></span>
+                            <span class="q1-9 keyfield"></span>
+                            <span class="q2-9 keyfield"></span>
+                            <span class="q3-9 keyfield"></span>
+                            <span class="q4-9 keyfield"></span>
+                            <span class="q5-9 keyfield"></span>
+                            <span class="q6-9 keyfield"></span>
+                            <span class="q7-9 keyfield"></span>
+                            <span class="q8-9 keyfield"></span>
+                        </p>
+                        <p>
+                            <span class="left keytext">Early</span>
+                            <span class="right">Late</span>
+                        </p>
+                          </div>
+                        </div>
+                    </div>
+                </div>
                 <div class="panel panel-default">
                   <div class="panel-body">
                     <div class="col-md-4">
@@ -37,7 +63,7 @@
                     <div class="col-md-4">
                         <div class="checkbox">
                             <label>
-                                <input id="toggleMunicipals" type="checkbox" checked="checked"> Toggle municipal boundaries
+                                <input id="toggleMunicipals" type="checkbox" checked="checked"> Toggle average last departure per municipality
                             </label>
                         </div>                   
                     </div>

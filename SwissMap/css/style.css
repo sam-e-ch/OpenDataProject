@@ -3,14 +3,14 @@
 }
 
 .country {
-    fill: none;
+    fill: #ccc;
     stroke: #000;
-    stroke-width: 0.5;
+    stroke-width: 1;
 }
 
 .canton-boundaries {
     fill: none;
-    stroke: #888;
+    stroke: #FFF;
     stroke-width: 1;
     stroke-linejoin: round;
 } 
@@ -34,12 +34,63 @@
     opacity: 0;   
 }
 
-.q0-9 { fill: #41000E5); }
-.q1-9 { fill: #5000C9; }
-.q2-9 { fill: #6000AD; }
-.q3-9 { fill: #700092; }
-.q4-9 { fill: #800076; }
-.q5-9 { fill: #8F005A; }
-.q6-9 { fill: #9F003F; }
-.q7-9 { fill: #AF0023; }
-.q8-9 { fill: #BF0009; }
+#key .keyfield {
+    display: inline;
+    position: relative;
+    width: 20px; 
+    height: 20px;    
+    float: left;
+}
+
+#key {
+    position: absolute;    
+}
+
+#key .panel-heading {
+ cursor: move;   
+}
+
+.left {
+    float: left !important;   
+}
+
+.right {
+    float: right !important;   
+}
+
+.q0-9 {
+    fill: #4100E5;
+    background-color: #4100E5;
+}
+.q1-9 { 
+    fill: #5000C9; 
+    background-color: #5000C9;
+}
+.q2-9 {
+    fill: #6000AD;
+    background-color: #6000AD;
+}
+.q3-9 { 
+    fill: #700092; 
+    background-color: #700092;
+}
+.q4-9 { 
+    fill: #800076; 
+    background-color: #800076;
+}
+.q5-9 { 
+    fill: #8F005A;
+    background-color: #8F005A;
+}
+.q6-9 {
+    fill: #9F003F; 
+    background-color: #9F003F;
+}
+.q7-9 { 
+    fill: #AF0023; 
+    background-color: #AF0023;
+}
+.q8-9 { 
+    fill: #BF0009;
+    background-color: #BF0009;
+}

@@ -9,8 +9,15 @@ $(document).ready(function(){
     });
     
     $('#toggleMunicipals').click(function(){
-        toggleHide($('.municipality-boundaries'));
+        toggleHide($('.municipalities'));
     });
+    
+    $('#key').draggable({
+        containment: "parent",
+        handle: ".panel-heading"
+    });
+    
+    positionKey();
     
     $( window ).resize(function() {
         resize();   
@@ -43,17 +50,17 @@ function showMap() {
     
     d3.json("data/topo/ch.json", function(error, ch) {
         
+        svg.append("path").datum(topojson.feature(ch, ch.objects.country))
+            .attr("class", "country").attr("d", country);
+        
         svg.append("g")
           .attr("class", "municipalities")
         .selectAll("path")
           .data(topojson.feature(ch, ch.objects.municipalities).features)
         .enter().append("path")
-          .attr("class", function(d) { console.log(d); return quantize(rateById.get(d.id)); })
+          .attr("class", function(d) { return quantize(rateById.get(d.id)); })
           .attr("d", path);
-        
-        svg.append("path").datum(topojson.feature(ch, ch.objects.country))
-            .attr("class", "country").attr("d", country);
-        
+                
         svg.append("path").datum(topojson.feature(ch, ch.objects.lakes))
             .attr("class", "lake").attr("d", path);        
         
@@ -76,4 +83,13 @@ function toggleHide(cl){
 
 function resize(){
     $('svg').width($('#map').width());
+    positionKey();
+}
+
+function positionKey(){
+    var p = $('#map').position();
+    $('#key').css({
+        top : p.top+5, 
+        left: p.left+5
+    });
 }
