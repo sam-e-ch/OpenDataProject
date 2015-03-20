@@ -59,7 +59,6 @@ var processTrainstations = function () {
     runQuery('DELETE FROM trainstations;');
     
     var id, xKoord, yKoord;
-    var i = 0;
     
     rd.on('line', function(line) {
         loadingDots();
@@ -76,6 +75,37 @@ var processTrainstations = function () {
     
     rd.on('end', function() {        
         console.log('Finished proccessing Trainstations!');
+        event.emit('taskComplete');
+    });
+};
+
+/*
+*Reads the data from the g1g14.csv file and writes the data used in the database.
+*/
+var processMunicipalities = function () {
+    console.log('Proccessing Municipalities...\n');
+    rd = new LineByLineReader('./data/g1g14.csv');    
+    
+    //Cleanup table
+    runQuery('DELETE FROM municipalities;');  
+    var temp;
+    
+    rd.on('line', function(line) {
+        loadingDots();
+        temp = line.split(',');
+        if(!isNaN(temp[0])){
+            runQuery('INSERT INTO municipalities (municipalities_ID, name, canton, min_x, max_x, min_y, max_y) VALUES ('
+                     + temp[0] +',' + connection.escape(temp[1]) +','+ temp[3] +','+ temp[6]/1000 +','+ temp[7]/1000 +','+ temp[8]/1000 +','+ temp[9]/1000 + ');');
+            rd.pause();
+        }
+    });
+
+    rd.on('error', function(err) {
+        res.end(err);
+    }); 
+    
+    rd.on('end', function() {        
+        console.log('Finished proccessing Municipalities!');
         event.emit('taskComplete');
     });
 };
@@ -159,9 +189,14 @@ function loadingDots(){
 */
 
 if(process.argv[2]=='setup'){
-    tasks.push(setupDB);
+    tasks.push(setupDB);    
+    tasks.push(processMunicipalities);
     tasks.push(processTrainstations);
     tasks.push(processDepartures); 
+}
+
+if(process.argv[2]=='schema'){
+    tasks.push(setupDB); 
 }
 
 if(process.argv[2]=='update'){
@@ -175,6 +210,10 @@ if(process.argv[2]=='departures'){
 
 if(process.argv[2]=='trainstations'){
     tasks.push(processTrainstations);
+}
+
+if(process.argv[2]=='municipalities'){
+    tasks.push(processMunicipalities);
 }
 
 tasks.push(closeConnection);
