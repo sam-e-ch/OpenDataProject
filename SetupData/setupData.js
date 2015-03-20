@@ -18,7 +18,7 @@ event.on('taskComplete', function () { taskQueue(); });
 */
 var processDepartures = function () {
     console.log('Processing departures... (This may take several hours!)\n');
-    rd = new LineByLineReader('./data/FPLAN');    
+    rd = new LineByLineReader('data/FPLAN');    
     
     //This regexp matches the lines used
     var patt = /^(\d{7}\s.{29}\d{5})/;
@@ -53,7 +53,7 @@ var processDepartures = function () {
 */
 var processTrainstations = function () {
     console.log('Proccessing Trainstations...\n');
-    rd = new LineByLineReader('./data/BFKOORD');    
+    rd = new LineByLineReader('data/BFKOORD');    
     
     //Cleanup table
     runQuery('DELETE FROM trainstations;');
@@ -84,7 +84,7 @@ var processTrainstations = function () {
 */
 var processMunicipalities = function () {
     console.log('Proccessing Municipalities...\n');
-    rd = new LineByLineReader('./data/g1g14.csv');    
+    rd = new LineByLineReader('data/g1g14.csv');    
     
     //Cleanup table
     runQuery('DELETE FROM municipalities;');  
@@ -158,6 +158,22 @@ var closeConnection = function() {
     connection.end();   
 };
 
+function getAvgDepartures(){
+    console.log('Generation avg.json. This may take a while!');
+     connection.query("SELECT temp.municipality AS id, AVG(temp.max_departure) AS avg FROM (SELECT   departures.trainstation, MAX(departures.departure) AS max_departure, municipality.municipality FROM departures INNER JOIN (SELECT trainstations.trainstations_ID AS trainstation, municipalities.municipalities_ID AS municipality FROM trainstations, municipalities WHERE municipalities.min_x <= trainstations.x_koordinate AND municipalities.max_x > trainstations.x_koordinate AND municipalities.min_y <= trainstations.y_koordinate AND municipalities.max_y > trainstations.y_koordinate GROUP BY trainstations.trainstations_ID) municipality ON departures.trainstation = municipality.trainstation GROUP BY departures.trainstation) temp GROUP BY temp.municipality;",function(err,rows){
+            if(!err) {
+                var fs = require('fs');
+                fs.writeFile("data/avg.json", JSON.stringify(rows), function(err) {
+                    if(err) {
+                        return console.log(err);
+                    }
+                    console.log("The file was saved!");
+                }); 
+            }          
+            event.emit('taskComplete');
+        });
+}
+
 /*
 *Runs a query on the database
 */
@@ -193,6 +209,7 @@ if(process.argv[2]=='setup'){
     tasks.push(processMunicipalities);
     tasks.push(processTrainstations);
     tasks.push(processDepartures); 
+    tasks.push(getAvgDepartures);
 }
 
 if(process.argv[2]=='schema'){
@@ -214,6 +231,10 @@ if(process.argv[2]=='trainstations'){
 
 if(process.argv[2]=='municipalities'){
     tasks.push(processMunicipalities);
+}
+
+if(process.argv[2]=='avg'){
+    tasks.push(getAvgDepartures);
 }
 
 tasks.push(closeConnection);

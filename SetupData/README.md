@@ -1,3 +1,6 @@
+#SetupData
+This is a little helper programm to setup the data right.
+
 #How to install
 1. Install mysql Server (http://dev.mysql.com/downloads/mysql/)
 2. Install node.js (https://nodejs.org/)
@@ -7,3 +10,4 @@
 6. Download the data from [here](http://www.fahrplanfelder.ch/de/fahrplandaten) and copy the BFKOORD and FPLAN files into the data folder
 7. Download the data from [here](http://www.bfs.admin.ch/bfs/portal/de/index/dienstleistungen/geostat/datenbeschreibung/generalisierte_gemeindegrenzen.Document.183131.zip) and copy the file ```ggg_2014/txt/g1g14.csv``` into the data folder
 8. Run ```node setupDatabase.js setup```
+9. The File *'avg.json'* should be generated in the *'data'* folder
