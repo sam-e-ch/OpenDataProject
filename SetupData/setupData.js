@@ -159,11 +159,27 @@ var closeConnection = function() {
 };
 
 function getAvgDepartures(){
-    console.log('Generation avg.json. This may take a while!');
+    console.log('Generating avg.json. This may take a while!');
      connection.query("SELECT temp.municipality AS id, AVG(temp.max_departure) AS avg FROM (SELECT   departures.trainstation, MAX(departures.departure) AS max_departure, municipality.municipality FROM departures INNER JOIN (SELECT trainstations.trainstations_ID AS trainstation, municipalities.municipalities_ID AS municipality FROM trainstations, municipalities WHERE municipalities.min_x <= trainstations.x_koordinate AND municipalities.max_x > trainstations.x_koordinate AND municipalities.min_y <= trainstations.y_koordinate AND municipalities.max_y > trainstations.y_koordinate GROUP BY trainstations.trainstations_ID) municipality ON departures.trainstation = municipality.trainstation GROUP BY departures.trainstation) temp GROUP BY temp.municipality;",function(err,rows){
             if(!err) {
                 var fs = require('fs');
                 fs.writeFile("data/avg.json", JSON.stringify(rows), function(err) {
+                    if(err) {
+                        return console.log(err);
+                    }
+                    console.log("The file was saved!");
+                }); 
+            }          
+            event.emit('taskComplete');
+        });
+}
+
+function getAvgDeparturesCanton(){
+    console.log('Generating canton_avg.json. This may take a while!');
+     connection.query("SELECT temp.canton as id, AVG(temp.max_departure) as avg FROM (SELECT   departures.trainstation, MAX(departures.departure) AS max_departure, municipality.municipality, municipality.canton FROM     departures INNER JOIN (SELECT trainstations.trainstations_ID AS trainstation, municipalities.municipalities_ID AS municipality, municipalities.canton as canton  FROM trainstations, municipalities WHERE municipalities.min_x <= trainstations.x_koordinate AND municipalities.max_x > trainstations.x_koordinate AND municipalities.min_y <= trainstations.y_koordinate AND municipalities.max_y > trainstations.y_koordinate GROUP BY trainstations.trainstations_ID) municipality ON departures.trainstation = municipality.trainstation GROUP BY departures.trainstation) temp GROUP BY temp.canton;",function(err,rows){
+            if(!err) {
+                var fs = require('fs');
+                fs.writeFile("data/canton_avg.json", JSON.stringify(rows), function(err) {
                     if(err) {
                         return console.log(err);
                     }
@@ -235,6 +251,10 @@ if(process.argv[2]=='municipalities'){
 
 if(process.argv[2]=='avg'){
     tasks.push(getAvgDepartures);
+}
+
+if(process.argv[2]=='canton'){
+    tasks.push(getAvgDeparturesCanton);
 }
 
 tasks.push(closeConnection);

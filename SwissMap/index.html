@@ -53,20 +53,34 @@
                 </div>
                 <div class="panel panel-default">
                   <div class="panel-body">
+                      <div class="col-md-4">
+                        Show average last departure for:
+                        <div class="radio">
+                          <label>
+                            <input type="radio" name="show" id="showMunicipalities" value="municipalities" checked>
+                            Municipalities
+                          </label>
+                        </div>
+                        <div class="radio">
+                          <label>
+                            <input type="radio" name="show" id="showCantons" value="cantons">
+                            Cantons
+                          </label>
+                        </div>
+                        <div class="radio">
+                          <label>
+                            <input type="radio" name="show" id="showNone" value="none">
+                            None
+                          </label>
+                        </div>
+                    </div>
                     <div class="col-md-4">
                         <div class="checkbox">
                             <label>
                                 <input id="toggleLakes" type="checkbox" checked="checked"> Toggle Lakes
                             </label>
                         </div>                   
-                    </div>
-                    <div class="col-md-4">
-                        <div class="checkbox">
-                            <label>
-                                <input id="toggleMunicipals" type="checkbox" checked="checked"> Toggle average last departure per municipality
-                            </label>
-                        </div>                   
-                    </div>
+                    </div>                    
                     <div class="col-md-4">
                         <div class="checkbox">
                             <label>

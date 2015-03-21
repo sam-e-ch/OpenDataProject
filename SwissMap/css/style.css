@@ -14,6 +14,9 @@
     stroke-width: 1;
     stroke-linejoin: round;
 } 
+.cantons{
+    fill: none;   
+}
 .municipality-boundaries {
     fill: none;
     stroke: #666;

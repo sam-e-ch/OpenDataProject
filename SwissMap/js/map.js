@@ -5,7 +5,7 @@ $(document).ready(function(){
     });
     
     $('#toggleCantons').click(function(){
-        toggleHide($('.canton-boundaries'));
+        toggleHide($('.cantons'));
     });
     
     $('#toggleMunicipals').click(function(){
@@ -17,15 +17,28 @@ $(document).ready(function(){
         handle: ".panel-heading"
     });
     
+     $('input[type=radio][name=show]').change(function() {
+        if(this.value == 'municipalities'){
+            $('.cantons').attr('opacity', 0);
+            if ($('.municipalities').attr('opacity'))
+                $('.municipalities').removeAttr('opacity');
+            
+        } else if (this.value == 'cantons'){
+            $('.municipalities').attr('opacity', 0);
+            if ($('.cantons').attr('opacity'))
+                $('.cantons').removeAttr('opacity');
+        } else {
+            $('.municipalities').attr('opacity', 0);
+            $('.cantons').attr('opacity', 0);
+        }     
+     });
+    
     positionKey();
     
     $( window ).resize(function() {
         resize();   
     });
 });
-
-var rateById;
-var quantize
 
 function showMap() {
     
@@ -34,9 +47,10 @@ function showMap() {
     var path = d3.geo.path().projection(null);
     var svg = d3.select("#map").append("svg").attr("width", width).attr("height", height).attr("class", "svg");
     
-    rateById = d3.map();
+    var rateById = d3.map();
+    var rateCanton = d3.map();
 
-    quantize = d3.scale.quantize()
+    var quantize = d3.scale.quantize()
         .domain([900, 2800])
         .range(d3.range(9).map(function(i) { return "q" + i + "-9";}));
     
@@ -44,6 +58,12 @@ function showMap() {
     d3.json("data/avg.json", function(d) { 
         for(var i = 0; i<d.length; i++){
             rateById.set(d[i].id, +d[i].avg);
+        }
+    });
+    
+    d3.json("data/canton_avg.json", function(d) { 
+        for(var i = 0; i<d.length; i++){
+            rateCanton.set(d[i].id, +d[i].avg);
         }
     });
     
@@ -59,6 +79,15 @@ function showMap() {
           .data(topojson.feature(ch, ch.objects.municipalities).features)
         .enter().append("path")
           .attr("class", function(d) { return quantize(rateById.get(d.id)); })
+          .attr("d", path);
+        
+        svg.append("g")
+          .attr("class", "cantons")
+        .attr("opacity", "0")
+        .selectAll("path")
+          .data(topojson.feature(ch, ch.objects.cantons).features)
+        .enter().append("path")
+          .attr("class", function(d) { return quantize(rateCanton.get(d.id)); })
           .attr("d", path);
                 
         svg.append("path").datum(topojson.feature(ch, ch.objects.lakes))
