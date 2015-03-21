@@ -5,11 +5,7 @@ $(document).ready(function(){
     });
     
     $('#toggleCantons').click(function(){
-        toggleHide($('.cantons'));
-    });
-    
-    $('#toggleMunicipals').click(function(){
-        toggleHide($('.municipalities'));
+        toggleHide($('.canton-boundaries'));
     });
     
     $('#key').draggable({
