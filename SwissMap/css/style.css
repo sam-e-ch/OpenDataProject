@@ -24,6 +24,11 @@
     stroke-width: .3;
 }
 
+.cantons :hover, .municipalities :hover{
+   stroke: #000;
+    stroke-width: 2;
+}
+
 .lake {
     fill: #4477ff;
     stroke: #00f;

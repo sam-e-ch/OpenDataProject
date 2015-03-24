@@ -17,8 +17,7 @@ $(document).ready(function(){
         if(this.value == 'municipalities'){
             $('.cantons').attr('display', 'none');
             if ($('.municipalities').attr('display'))
-                $('.municipalities').removeAttr('display');
-            
+                $('.municipalities').removeAttr('display');            
         } else if (this.value == 'cantons'){
             $('.municipalities').attr('display', 'none');
             if ($('.cantons').attr('display'))
@@ -115,11 +114,7 @@ function showMap() {
 }
 
 
-function toggleHide(cl){
-    if (cl.attr('opacity'))
-        cl.removeAttr('opacity');
-    else cl.attr('opacity', 0);
-    
+function toggleHide(cl){    
     if (cl.attr('display'))
         cl.removeAttr('display');
     else cl.attr('display', 'none');
