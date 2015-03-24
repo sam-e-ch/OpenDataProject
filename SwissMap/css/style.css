@@ -17,24 +17,17 @@
 .cantons{
     fill: none;   
 }
-.municipality-boundaries {
-    fill: none;
-    stroke: #666;
-    stroke-width: .3;
-}
 
 .municipalities{
-    fill: none;   
+    fill: none;      
+    stroke: #666;
+    stroke-width: .3;
 }
 
 .lake {
     fill: #4477ff;
     stroke: #00f;
     stroke-width: .3;
-}
-
-.hidden {
-    opacity: 0;   
 }
 
 #key .keyfield {
