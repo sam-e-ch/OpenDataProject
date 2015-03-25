@@ -63,7 +63,7 @@ function showMap() {
     });
     
     
-    d3.json("data/topo/ch.json", function(error, ch) {        
+    d3.json("data/ch.json", function(error, ch) {        
         drawCountry(ch);        
         drawMunicipalities(ch);        
         drawCantons(ch);                

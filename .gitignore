@@ -1,4 +1,3 @@
-*.class
-data/
+SetupData/data/
 node_modules/
-dataParser/
+!data/*.json
