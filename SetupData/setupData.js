@@ -190,6 +190,22 @@ function getAvgDeparturesCanton(){
         });
 }
 
+function getLastDepartures(){
+    console.log('Generating last.json. This may take a while!');
+     connection.query("SELECT temp.municipality AS id, MAX(temp.max_departure) AS 'max', temp.name AS 'name' FROM (SELECT departures.trainstation, MAX(CASE WHEN departures.departure < 400 THEN departures.departure + 2400 WHEN departures.departure > 2800 THEN departures.departure - 2400 ELSE departures.departure END ) AS max_departure, municipality.municipality, municipality.name as 'name' FROM departures INNER JOIN (SELECT trainstations.trainstations_ID AS trainstation, municipalities.municipalities_ID AS municipality, municipalities.name AS 'name' FROM trainstations, municipalities WHERE municipalities.min_x <= trainstations.x_koordinate AND municipalities.max_x > trainstations.x_koordinate AND municipalities.min_y <= trainstations.y_koordinate AND municipalities.max_y > trainstations.y_koordinate GROUP BY trainstations.trainstations_ID) municipality ON departures.trainstation = municipality.trainstation GROUP BY departures.trainstation) temp WHERE temp.max_departure < 2800 GROUP BY temp.municipality;",function(err,rows){
+            if(!err) {
+                var fs = require('fs');
+                fs.writeFile("data/last.json", JSON.stringify(rows), function(err) {
+                    if(err) {
+                        return console.log(err);
+                    }
+                    console.log("The file was saved!");
+                }); 
+            }          
+            event.emit('taskComplete');
+        });
+}
+
 /*
 *Runs a query on the database
 */
@@ -255,6 +271,10 @@ if(process.argv[2]=='avg'){
 
 if(process.argv[2]=='canton'){
     tasks.push(getAvgDeparturesCanton);
+}
+
+if(process.argv[2]=='last'){
+    tasks.push(getLastDepartures);
 }
 
 tasks.push(closeConnection);

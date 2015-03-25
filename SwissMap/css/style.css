@@ -19,13 +19,13 @@
     fill: none;   
 }
 
-.municipalities{
+.municipalities, .lastMunicipalities{
     fill: none;      
     stroke: #666;
     stroke-width: .3;
 }
 
-.cantons :hover, .municipalities :hover{
+.cantons :hover, .municipalities :hover, .lastMunicipalities :hover{
     stroke: #000;
     stroke-width: 1.5;
 }

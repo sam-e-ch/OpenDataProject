@@ -15,16 +15,21 @@ $(document).ready(function(){
     
      $('input[type=radio][name=show]').change(function() {
         if(this.value == 'municipalities'){
-            $('.cantons').attr('display', 'none');
-            if ($('.municipalities').attr('display'))
-                $('.municipalities').removeAttr('display');            
+            hide($('.cantons'));
+            hide($('.lastMunicipalities'));
+            unhide($('.municipalities'));        
         } else if (this.value == 'cantons'){
-            $('.municipalities').attr('display', 'none');
-            if ($('.cantons').attr('display'))
-                $('.cantons').removeAttr('display');
+            hide($('.lastMunicipalities'));
+            hide($('.municipalities'));
+            unhide($('.cantons'));
+        } else if (this.value == 'lastMunicipalities'){
+            hide($('.municipalities'));
+            hide($('.cantons'));
+            unhide($('.lastMunicipalities'));
         } else {
-            $('.municipalities').attr('display', 'none');
-            $('.cantons').attr('display', 'none');
+            hide($('.municipalities'));
+            hide($('.cantons'));
+            hide($('.lastMunicipalities'));
         }     
      });
     
@@ -43,6 +48,7 @@ function showMap() {
     var svg = d3.select("#map").append("svg").attr("width", width).attr("height", height).attr("class", "svg");
     
     var rateMunicipality = d3.map();
+    var rateLastMunicipality = d3.map();
     var rateCanton = d3.map();
     
     var municipalityName = d3.map();
@@ -59,6 +65,12 @@ function showMap() {
         }
     });
     
+    d3.json("data/last.json", function(d) { 
+        for(var i = 0; i<d.length; i++){
+            rateLastMunicipality.set(d[i].id, +d[i].max);
+        }
+    });
+    
     d3.json("data/canton_avg.json", function(d) { 
         for(var i = 0; i<d.length; i++){
             rateCanton.set(d[i].id, +d[i].avg);
@@ -68,7 +80,8 @@ function showMap() {
     
     d3.json("data/ch.json", function(error, ch) {        
         drawCountry(ch);        
-        drawMunicipalities(ch);        
+        drawMunicipalities(ch);
+        drawLastMunicipality(ch);
         drawCantons(ch);                
         drawLakes(ch);   
         drawCantonBorders(ch);
@@ -89,6 +102,19 @@ function showMap() {
             .attr("d", path)
             .append("title")
             .text(function(d){return municipalityName.get(d.id) + ': ' + showTime(rateMunicipality.get(d.id));});
+    }
+    
+    function drawLastMunicipality(ch){
+        svg .append("g")
+            .attr("class", "lastMunicipalities")
+            .attr("display", "none")
+            .selectAll("path")
+            .data(topojson.feature(ch, ch.objects.municipalities).features)
+            .enter().append("path")
+            .attr("class", function(d) { return quantize(rateLastMunicipality.get(d.id)); })
+            .attr("d", path)
+            .append("title")
+            .text(function(d){return municipalityName.get(d.id) + ': ' + showTime(rateLastMunicipality.get(d.id));});
     }
     
     function drawCantons(ch){
@@ -121,6 +147,15 @@ function toggleHide(cl){
     if (cl.attr('display'))
         cl.removeAttr('display');
     else cl.attr('display', 'none');
+}
+
+function hide(cl){    
+    cl.attr('display', 'none');
+}
+
+function unhide(cl){    
+    if (cl.attr('display'))
+        cl.removeAttr('display');
 }
 
 function resize(){
