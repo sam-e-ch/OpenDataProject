@@ -48,7 +48,7 @@ function showMap() {
     var municipalityName = d3.map();
 
     var quantize = d3.scale.quantize()
-        .domain([900, 2800])
+        .domain([1000, 2800])
         .range(d3.range(9).map(function(i) { return "q" + i + "-9";}));
     
     
@@ -140,9 +140,7 @@ function showTime(time){
     if(isNaN(time)){
         return 'No Departures';   
     }
-    if(time >= 2400){
-        time -= 2400;   
-    }
+    
     time = Math.round(time);
     var h = Math.floor(time/100);    
     var m = time-(h*100);
