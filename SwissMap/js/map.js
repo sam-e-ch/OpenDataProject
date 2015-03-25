@@ -44,6 +44,8 @@ function showMap() {
     
     var rateMunicipality = d3.map();
     var rateCanton = d3.map();
+    
+    var municipalityName = d3.map();
 
     var quantize = d3.scale.quantize()
         .domain([900, 2800])
@@ -53,6 +55,7 @@ function showMap() {
     d3.json("data/avg.json", function(d) { 
         for(var i = 0; i<d.length; i++){
             rateMunicipality.set(d[i].id, +d[i].avg);
+            municipalityName.set(d[i].id, d[i].name);
         }
     });
     
@@ -85,7 +88,7 @@ function showMap() {
             .attr("class", function(d) { return quantize(rateMunicipality.get(d.id)); })
             .attr("d", path)
             .append("title")
-            .text(function(d){return rateMunicipality.get(d.id);});
+            .text(function(d){return municipalityName.get(d.id) + ': ' + showTime(rateMunicipality.get(d.id));});
     }
     
     function drawCantons(ch){
@@ -98,7 +101,7 @@ function showMap() {
             .attr("class", function(d) { return quantize(rateCanton.get(d.id)); })
             .attr("d", path)
             .append("title")
-            .text(function(d){return rateCanton.get(d.id);});
+            .text(function(d){return showTime(rateCanton.get(d.id));});
     }
     
     function drawLakes(ch){
@@ -131,4 +134,27 @@ function positionKey(){
         top : p.top+5, 
         left: p.left+5
     });
+}
+
+function showTime(time){
+    if(isNaN(time)){
+        return 'No Departures';   
+    }
+    if(time >= 2400){
+        time -= 2400;   
+    }
+    time = Math.round(time);
+    var h = Math.floor(time/100);    
+    var m = time-(h*100);
+    time = h * 3600 + m * 60;
+    
+    var hours   = Math.floor(time / 3600);
+    var minutes = Math.floor((time - (hours * 3600)) / 60);
+    var seconds = time - (hours * 3600) - (minutes * 60);
+    
+    if (hours >= 24) { hours-= 24;}
+    if (hours   < 10) { hours   = "0"+hours; }
+    if (minutes < 10) { minutes = "0"+minutes; }
+    var t = hours + ':' + minutes;
+    return t;
 }
