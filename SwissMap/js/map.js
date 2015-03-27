@@ -1,3 +1,6 @@
+var layers = ['avgMunicipalities', 'cantons', 'lastMunicipalities', 'countMunicipalities'];
+var mode = d3.map();
+
 $(document).ready(function(){
     showMap();
     $('#toggleLakes').click(function(){
@@ -13,24 +16,14 @@ $(document).ready(function(){
         handle: ".panel-heading"
     });
     
-     $('input[type=radio][name=show]').change(function() {
-        if(this.value == 'municipalities'){
-            hide($('.cantons'));
-            hide($('.lastMunicipalities'));
-            unhide($('.municipalities'));        
-        } else if (this.value == 'cantons'){
-            hide($('.lastMunicipalities'));
-            hide($('.municipalities'));
-            unhide($('.cantons'));
-        } else if (this.value == 'lastMunicipalities'){
-            hide($('.municipalities'));
-            hide($('.cantons'));
-            unhide($('.lastMunicipalities'));
-        } else {
-            hide($('.municipalities'));
-            hide($('.cantons'));
-            hide($('.lastMunicipalities'));
-        }     
+    mode.set('avgMunicipalities', 'time');
+    mode.set('cantons', 'time');
+    mode.set('lastMunicipalities', 'time');
+    mode.set('countMunicipalities', 'log');
+    
+     $('input[type=radio][name=show]').change(function() {        
+         showLayer(this.value);
+         labelKey(mode.get(this.value));
      });
     
     positionKey();
@@ -52,22 +45,27 @@ function showMap() {
     var rateCanton = d3.map();
     
     var municipalityName = d3.map();
+    var municipalityArea = d3.map();
+    var municipalityPopulation = d3.map();
+    var municipalityCountDepartures = d3.map();
 
-    var quantize = d3.scale.quantize()
+    var quantizeTime = d3.scale.quantize()
         .domain([1000, 2800])
         .range(d3.range(9).map(function(i) { return "q" + i + "-9";}));
     
+    var quantizeCount = d3.scale.quantize()
+        .domain([1, 13.5])
+        .range(d3.range(9).map(function(i) { return "q" + i + "-9";}));
     
-    d3.json("data/avg.json", function(d) { 
+    
+    d3.json("data/municipalities.json", function(d) { 
         for(var i = 0; i<d.length; i++){
             rateMunicipality.set(d[i].id, +d[i].avg);
-            municipalityName.set(d[i].id, d[i].name);
-        }
-    });
-    
-    d3.json("data/last.json", function(d) { 
-        for(var i = 0; i<d.length; i++){
             rateLastMunicipality.set(d[i].id, +d[i].max);
+            municipalityArea.set(d[i].id, +d[i].area);
+            municipalityPopulation.set(d[i].id, +d[i].population);
+            municipalityCountDepartures.set(d[i].id, +d[i].count_departures);
+            municipalityName.set(d[i].id, d[i].name);
         }
     });
     
@@ -82,6 +80,7 @@ function showMap() {
         drawCountry(ch);        
         drawMunicipalities(ch);
         drawLastMunicipality(ch);
+        drawCountMunicipality(ch);
         drawCantons(ch);                
         drawLakes(ch);   
         drawCantonBorders(ch);
@@ -94,11 +93,11 @@ function showMap() {
     
     function drawMunicipalities(ch){
         svg .append("g")
-            .attr("class", "municipalities")
+            .attr("class", "avgMunicipalities")
             .selectAll("path")
             .data(topojson.feature(ch, ch.objects.municipalities).features)
             .enter().append("path")
-            .attr("class", function(d) { return quantize(rateMunicipality.get(d.id)); })
+            .attr("class", function(d) { return quantizeTime(rateMunicipality.get(d.id)); })
             .attr("d", path)
             .append("title")
             .text(function(d){return municipalityName.get(d.id) + ': ' + showTime(rateMunicipality.get(d.id));});
@@ -111,10 +110,23 @@ function showMap() {
             .selectAll("path")
             .data(topojson.feature(ch, ch.objects.municipalities).features)
             .enter().append("path")
-            .attr("class", function(d) { return quantize(rateLastMunicipality.get(d.id)); })
+            .attr("class", function(d) { return quantizeTime(rateLastMunicipality.get(d.id)); })
             .attr("d", path)
             .append("title")
             .text(function(d){return municipalityName.get(d.id) + ': ' + showTime(rateLastMunicipality.get(d.id));});
+    }
+    
+    function drawCountMunicipality(ch){
+        svg .append("g")
+            .attr("class", "countMunicipalities")
+            .attr("display", "none")
+            .selectAll("path")
+            .data(topojson.feature(ch, ch.objects.municipalities).features)
+            .enter().append("path")
+            .attr("class", function(d) { return quantizeCount(Math.log(municipalityCountDepartures.get(d.id))); })
+            .attr("d", path)
+            .append("title")
+            .text(function(d){return municipalityName.get(d.id) + ': ' + municipalityCountDepartures.get(d.id);});
     }
     
     function drawCantons(ch){
@@ -124,7 +136,7 @@ function showMap() {
             .selectAll("path")
             .data(topojson.feature(ch, ch.objects.cantons).features)
             .enter().append("path")
-            .attr("class", function(d) { return quantize(rateCanton.get(d.id)); })
+            .attr("class", function(d) { return quantizeTime(rateCanton.get(d.id)); })
             .attr("d", path)
             .append("title")
             .text(function(d){return showTime(rateCanton.get(d.id));});
@@ -149,6 +161,16 @@ function toggleHide(cl){
     else cl.attr('display', 'none');
 }
 
+function showLayer(layer){
+    for(var i = 0; i < layers.length; i++){
+        if (layers[i] != layer){
+            hide($('.'+layers[i]));   
+        } else {
+            unhide($('.'+layers[i]));
+        }
+    }
+}
+
 function hide(cl){    
     cl.attr('display', 'none');
 }
@@ -169,6 +191,21 @@ function positionKey(){
         top : p.top+5, 
         left: p.left+5
     });
+}
+
+function labelKey(mode){
+    var time = ['10:00-11:59', '12:00-13:59', '14:00-15:59', '16:00-17:59', '18:00-19:59', '20:00-21:59','22:00-23:59', '00:00-01:59', '02:00-03:59'];
+    var log = [1,4,16,65,260,1043,4188,16815,67508];
+    
+    var keys = $('#key > .panel > .panel-body > p > small');
+    
+    for(var i=0; i<keys.length;i++){
+        if(mode=='log'){
+            $(keys[i]).text(log[i]);   
+        } else {
+            $(keys[i]).text(time[i]); 
+        }
+    }
 }
 
 function showTime(time){

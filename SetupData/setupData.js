@@ -158,12 +158,12 @@ var closeConnection = function() {
     connection.end();   
 };
 
-function getAvgDepartures(){
-    console.log('Generating avg.json. This may take a while!');
-     connection.query("SELECT temp.municipality AS id, AVG(temp.max_departure) AS 'avg', temp.name AS 'name' FROM (SELECT departures.trainstation, MAX(CASE WHEN departures.departure < 400 THEN departures.departure + 2400 WHEN departures.departure > 2800 THEN departures.departure - 2400 ELSE departures.departure END ) AS max_departure, municipality.municipality, municipality.name as 'name' FROM departures INNER JOIN (SELECT trainstations.trainstations_ID AS trainstation, municipalities.municipalities_ID AS municipality, municipalities.name AS 'name' FROM trainstations, municipalities WHERE municipalities.min_x <= trainstations.x_koordinate AND municipalities.max_x > trainstations.x_koordinate AND municipalities.min_y <= trainstations.y_koordinate AND municipalities.max_y > trainstations.y_koordinate GROUP BY trainstations.trainstations_ID) municipality ON departures.trainstation = municipality.trainstation GROUP BY departures.trainstation) temp WHERE temp.max_departure < 2800 GROUP BY temp.municipality;",function(err,rows){
+function generateMunicipalitiesFile(){
+    console.log('Generating municipalities.json. This may take a while!');
+     connection.query("SELECT temp.municipality AS id, temp.name AS 'name', temp.area AS 'area', temp.population AS 'population', AVG(temp.max_departure) AS 'avg', MAX(temp.max_departure) AS 'max', SUM(temp.count) AS 'count_departures' FROM (SELECT departures.trainstation, MAX(CASE WHEN departures.departure < 400 THEN departures.departure + 2400 WHEN departures.departure > 2800 THEN departures.departure - 2400 ELSE departures.departure END ) AS max_departure, municipality.municipality, municipality.name as 'name', municipality.area AS 'area', municipality.population AS 'population', COUNT(departures.departures_ID) AS count FROM departures INNER JOIN (SELECT trainstations.trainstations_ID AS trainstation, municipalities.municipalities_ID AS municipality, municipalities.name AS 'name', municipalities.area AS 'area', municipalities.population AS 'population' FROM trainstations INNER JOIN municipalities ON municipalities.municipalities_ID = trainstations.municipality ) municipality ON departures.trainstation = municipality.trainstation GROUP BY departures.trainstation) temp GROUP BY temp.municipality;",function(err,rows){
             if(!err) {
                 var fs = require('fs');
-                fs.writeFile("data/avg.json", JSON.stringify(rows), function(err) {
+                fs.writeFile("data/municipalities.json", JSON.stringify(rows), function(err) {
                     if(err) {
                         return console.log(err);
                     }
@@ -176,26 +176,10 @@ function getAvgDepartures(){
 
 function getAvgDeparturesCanton(){
     console.log('Generating canton_avg.json. This may take a while!');
-     connection.query("SELECT temp.canton as id, AVG(temp.max_departure) as avg FROM (SELECT departures.trainstation, MAX(CASE WHEN departures.departure < 400 THEN departures.departure + 2400 WHEN departures.departure > 2800 THEN departures.departure - 2400 ELSE departures.departure END) AS max_departure, municipality.municipality, municipality.canton FROM departures INNER JOIN (SELECT trainstations.trainstations_ID AS trainstation, municipalities.municipalities_ID AS municipality, municipalities.canton AS canton, municipalities.name AS 'name' FROM trainstations, municipalities WHERE municipalities.min_x <= trainstations.x_koordinate AND municipalities.max_x > trainstations.x_koordinate AND municipalities.min_y <= trainstations.y_koordinate AND municipalities.max_y > trainstations.y_koordinate GROUP BY trainstations.trainstations_ID) municipality ON departures.trainstation = municipality.trainstation GROUP BY departures.trainstation) temp WHERE temp.max_departure < 2800 GROUP BY temp.canton;",function(err,rows){
+     connection.query("SELECT temp.canton as id, AVG(temp.max_departure) as avg FROM (SELECT departures.trainstation, MAX(CASE WHEN departures.departure < 400 THEN departures.departure + 2400 WHEN departures.departure > 2800 THEN departures.departure - 2400 ELSE departures.departure END) AS max_departure, municipality.municipality, municipality.canton FROM departures INNER JOIN (SELECT trainstations.trainstations_ID AS trainstation, municipalities.municipalities_ID AS municipality, municipalities.canton AS canton, municipalities.name AS 'name' FROM trainstations, municipalities WHERE municipalities.municipalities_ID = trainstations.municipality GROUP BY trainstations.trainstations_ID) municipality ON departures.trainstation = municipality.trainstation GROUP BY departures.trainstation) temp WHERE temp.max_departure < 2800 GROUP BY temp.canton;",function(err,rows){
             if(!err) {
                 var fs = require('fs');
                 fs.writeFile("data/canton_avg.json", JSON.stringify(rows), function(err) {
-                    if(err) {
-                        return console.log(err);
-                    }
-                    console.log("The file was saved!");
-                }); 
-            }          
-            event.emit('taskComplete');
-        });
-}
-
-function getLastDepartures(){
-    console.log('Generating last.json. This may take a while!');
-     connection.query("SELECT temp.municipality AS id, MAX(temp.max_departure) AS 'max', temp.name AS 'name' FROM (SELECT departures.trainstation, MAX(CASE WHEN departures.departure < 400 THEN departures.departure + 2400 WHEN departures.departure > 2800 THEN departures.departure - 2400 ELSE departures.departure END ) AS max_departure, municipality.municipality, municipality.name as 'name' FROM departures INNER JOIN (SELECT trainstations.trainstations_ID AS trainstation, municipalities.municipalities_ID AS municipality, municipalities.name AS 'name' FROM trainstations, municipalities WHERE municipalities.min_x <= trainstations.x_koordinate AND municipalities.max_x > trainstations.x_koordinate AND municipalities.min_y <= trainstations.y_koordinate AND municipalities.max_y > trainstations.y_koordinate GROUP BY trainstations.trainstations_ID) municipality ON departures.trainstation = municipality.trainstation GROUP BY departures.trainstation) temp WHERE temp.max_departure < 2800 GROUP BY temp.municipality;",function(err,rows){
-            if(!err) {
-                var fs = require('fs');
-                fs.writeFile("data/last.json", JSON.stringify(rows), function(err) {
                     if(err) {
                         return console.log(err);
                     }
@@ -241,7 +225,6 @@ if(process.argv[2]=='setup'){
     tasks.push(processMunicipalities);
     tasks.push(processTrainstations);
     tasks.push(processDepartures); 
-    tasks.push(getAvgDepartures);
 }
 
 if(process.argv[2]=='schema'){
@@ -265,16 +248,12 @@ if(process.argv[2]=='municipalities'){
     tasks.push(processMunicipalities);
 }
 
-if(process.argv[2]=='avg'){
-    tasks.push(getAvgDepartures);
+if(process.argv[2]=='-m'){
+    tasks.push(generateMunicipalitiesFile);
 }
 
-if(process.argv[2]=='canton'){
+if(process.argv[2]=='-c'){
     tasks.push(getAvgDeparturesCanton);
-}
-
-if(process.argv[2]=='last'){
-    tasks.push(getLastDepartures);
 }
 
 tasks.push(closeConnection);
