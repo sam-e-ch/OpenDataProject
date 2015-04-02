@@ -1,5 +1,5 @@
 var sptv = sptv || {};
-
+ 
 $(document).ready(function(){
     sptv.map.draw();
     $('#toggleLakes').click(function(){
