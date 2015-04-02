@@ -25,7 +25,7 @@
     stroke-width: .3;
 }
 
-.cantons :hover, .avgMunicipalities :hover, .lastMunicipalities :hover, .countMunicipalities :hover{
+.highlight :hover{
     stroke: #000;
     stroke-width: 1.5;
 }

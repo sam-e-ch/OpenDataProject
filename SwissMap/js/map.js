@@ -99,7 +99,7 @@ sptv.map = {
 
         function drawMunicipalities(ch){
             svg .append("g")
-                .attr("class", "avgMunicipalities")
+                .attr("class", "avgMunicipalities highlight")
                 .selectAll("path")
                 .data(topojson.feature(ch, ch.objects.municipalities).features)
                 .enter().append("path")
@@ -111,7 +111,7 @@ sptv.map = {
 
         function drawLastMunicipality(ch){
             svg .append("g")
-                .attr("class", "lastMunicipalities")
+                .attr("class", "lastMunicipalities highlight")
                 .attr("display", "none")
                 .selectAll("path")
                 .data(topojson.feature(ch, ch.objects.municipalities).features)
@@ -124,7 +124,7 @@ sptv.map = {
 
         function drawCountMunicipality(ch){
             svg .append("g")
-                .attr("class", "countMunicipalities")
+                .attr("class", "countMunicipalities highlight")
                 .attr("display", "none")
                 .selectAll("path")
                 .data(topojson.feature(ch, ch.objects.municipalities).features)
@@ -137,7 +137,7 @@ sptv.map = {
 
         function drawCantons(ch){
             svg .append("g")
-                .attr("class", "cantons")
+                .attr("class", "cantons highlight")
                 .attr("display", "none")
                 .selectAll("path")
                 .data(topojson.feature(ch, ch.objects.cantons).features)
