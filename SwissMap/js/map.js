@@ -19,6 +19,7 @@ $(document).ready(function(){
     sptv.constants.mode.set('cantons', 'time');
     sptv.constants.mode.set('lastMunicipalities', 'time');
     sptv.constants.mode.set('countMunicipalities', 'log');
+    sptv.constants.mode.set('departuresPerPerson', 'density');
     
      $('input[type=radio][name=show]').change(function() {        
          sptv.helpers.showLayer(this.value);
@@ -33,7 +34,7 @@ $(document).ready(function(){
 });
 
 sptv.constants = {
-    layers: ['avgMunicipalities', 'cantons', 'lastMunicipalities', 'countMunicipalities'],
+    layers: ['avgMunicipalities', 'cantons', 'lastMunicipalities', 'countMunicipalities', 'departuresPerPerson'],
     mode: d3.map()
 };
 
@@ -62,6 +63,10 @@ sptv.map = {
         var quantizeCount = d3.scale.quantize()
             .domain([1, 13.5])
             .range(d3.range(9).map(function(i) { return "q" + i + "-9";}));
+        
+        var quantizeDensity = d3.scale.quantize()
+            .domain([0, 2])
+            .range(d3.range(9).map(function(i) { return "q" + i + "-9";}));
 
 
         d3.json("data/municipalities.json", function(d) { 
@@ -87,6 +92,7 @@ sptv.map = {
             drawMunicipalities(ch);
             drawLastMunicipality(ch);
             drawCountMunicipality(ch);
+            drawDeparturesPerPersonMunicipality(ch);
             drawCantons(ch);                
             drawLakes(ch);   
             drawCantonBorders(ch);
@@ -133,6 +139,19 @@ sptv.map = {
                 .attr("d", path)
                 .append("title")
                 .text(function(d){return municipalityName.get(d.id) + ': ' + municipalityCountDepartures.get(d.id);});
+        }
+        
+        function drawDeparturesPerPersonMunicipality(ch){
+            svg .append("g")
+                .attr("class", "departuresPerPerson highlight")
+                .attr("display", "none")
+                .selectAll("path")
+                .data(topojson.feature(ch, ch.objects.municipalities).features)
+                .enter().append("path")
+                .attr("class", function(d) { return quantizeDensity( (municipalityCountDepartures.get(d.id)/municipalityPopulation.get(d.id) )); })
+                .attr("d", path)
+                .append("title")
+                .text(function(d){return municipalityName.get(d.id) + ': ' +    (municipalityCountDepartures.get(d.id)/municipalityPopulation.get(d.id));});
         }
 
         function drawCantons(ch){
@@ -204,14 +223,17 @@ sptv.helpers = {
     labelKey: function (mode){
         var time = ['10:00-11:59', '12:00-13:59', '14:00-15:59', '16:00-17:59', '18:00-19:59', '20:00-21:59','22:00-23:59', '00:00-01:59', '02:00-03:59'];
         var log = [1,4,16,65,260,1043,4188,16815,67508];
+        var density = [1,4,16,65,260,1043,4188,16815,67508];
 
         var keys = $('#key > .panel > .panel-body > p > small');
 
         for(var i=0; i<keys.length;i++){
             if(mode=='log'){
                 $(keys[i]).text(log[i]);   
-            } else {
+            } else if (mode == 'time') {
                 $(keys[i]).text(time[i]); 
+            } else {
+                $(keys[i]).text(density[i]); 
             }
         }
     },
