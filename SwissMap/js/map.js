@@ -65,7 +65,7 @@ sptv.map = {
             .range(d3.range(9).map(function(i) { return "q" + i + "-9";}));
         
         var quantizeDensity = d3.scale.quantize()
-            .domain([0, 2])
+            .domain([0, 1.6])
             .range(d3.range(9).map(function(i) { return "q" + i + "-9";}));
 
 
@@ -223,7 +223,7 @@ sptv.helpers = {
     labelKey: function (mode){
         var time = ['10:00-11:59', '12:00-13:59', '14:00-15:59', '16:00-17:59', '18:00-19:59', '20:00-21:59','22:00-23:59', '00:00-01:59', '02:00-03:59'];
         var log = [1,4,16,65,260,1043,4188,16815,67508];
-        var density = [1,4,16,65,260,1043,4188,16815,67508];
+        var density = ['0-0.2','0.21-0.4','0.41-0.6','0.61-0.8','0.81-1','1.01-1.2','1.21-1.4','1.41-1.6','>1.6'];
 
         var keys = $('#key > .panel > .panel-body > p > small');
 
