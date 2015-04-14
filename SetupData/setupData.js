@@ -22,18 +22,25 @@ var processDepartures = function () {
     
     //This regexp matches the lines used
     var patt = /^(\d{7}\s.{29}\d{5})/;
+    var patt2 = /^(\*A VE)/;
     
     //Cleanup table
-    runQuery('DELETE FROM departures;');
+    //runQuery('DELETE FROM departures;');
     
-    var trainstation, time;
+    var trainstation, time, bitfield = 0;
     rd.on('line', function(line) {
+        if (patt2.test(line)){
+            bitfield = line.substring(22,28); 
+            if(bitfield == '      '){
+                bitfield = 0;   
+            }
+        }
+        
         if (patt.test(line)) {
             loadingDots();
             trainstation = line.substring(0,7);
             time = line.substring(37,43); 
-            runQuery('INSERT INTO departures (trainstation, departure) VALUES (' + trainstation + ',' + time + ');');
-            setTimeout(function(){ }, 1);
+            runQuery('INSERT INTO departures (trainstation, departure, bitfield) VALUES (' + trainstation + ',' + time + ',' + bitfield +');');
             rd.pause();
         }	
     });
@@ -109,6 +116,32 @@ var processMunicipalities = function () {
         event.emit('taskComplete');
     });
 };
+
+var processBitfield = function() {
+    console.log('Reading bitfields...\n');
+    rd = new LineByLineReader('data/BITFELD'); 
+    var day;
+    
+    rd.on('line', function(line) {
+        loadingDots();
+		var id, hex, bin;
+        id = line.split(' ')[0];
+        hex = line.split(' ')[1];
+        bin = hex2Bin(hex);
+        day = getWeekdays(id, bin);
+        
+        runQuery('INSERT INTO bitfield VALUES('+ id +','+ day[0] +',' + day[1] +','+ day[2] +','+ day[3] +','+ day[4] +','+ day[5] +','+ day[6]+')');
+        rd.pause();
+    });
+
+    rd.on('error', function(err) {
+        console.log(err);
+    }); 
+    
+    rd.on('end', function(){        
+        console.log('Finished!'); 
+    });
+}; 
 
 /*
 *Setup the database schema
@@ -216,6 +249,57 @@ function loadingDots(){
       process.stdout.write("Processing" + i);  // write text
 }
 
+function getWeekdays(id, str){
+    var threshold = 15;
+    var countDay=[0,0,0,0,0,0,0];
+    var day = [0,0,0,0,0,0,0];
+    var temp;
+    for(var i=0, l=str.length; i<l; i++){
+        temp = str.substr(i,1);		
+        if (temp == '1'){
+            countDay[i%7]++;
+        }
+    }
+    
+    for(var i = 0; i < 7; i++){
+        if(countDay[i]>threshold){
+            day[i] = 1;   
+        }
+    }
+    
+    return day;
+} 
+
+function hex2Bin(hex){
+    var bin = '';
+    for(var i=0; i< hex.length-5; i++){
+        bin += h2b(hex.substr(i,1));
+    }
+    return bin;
+}
+
+function h2b(c){
+    switch(c){
+        case '0': return '0000'; break;
+        case '1': return '0001'; break;
+        case '2': return '0010'; break;
+        case '3': return '0011'; break;
+        case '4': return '0100'; break;
+        case '5': return '0101'; break;
+        case '6': return '0110'; break;
+        case '7': return '0111'; break;
+        case '8': return '1000'; break;
+        case '9': return '1001'; break;
+        case 'A': return '1010'; break;
+        case 'B': return '1011'; break;
+        case 'C': return '1100'; break;
+        case 'D': return '1101'; break;
+        case 'E': return '1110'; break;
+        case 'F': return '1111'; break;
+        default: return c;
+    }
+}
+
 /*
 *Build the task queue (with different modes)
 */
@@ -254,6 +338,10 @@ if(process.argv[2]=='-m'){
 
 if(process.argv[2]=='-c'){
     tasks.push(getAvgDeparturesCanton);
+}
+
+if(process.argv[2]=='-b'){
+    tasks.push(processBitfield);
 }
 
 tasks.push(closeConnection);
