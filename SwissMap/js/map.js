@@ -17,7 +17,6 @@ $(document).ready(function(){
     $filterDay.click(function(){
         $filterDay.removeClass('active');
         $(this).addClass('active');
-        console.log($(this).attr('name'));
         var filter = $(this).attr('name')
         sptv.activeLayer.filter = filter;
         sptv.helpers.showLayer();
@@ -207,7 +206,7 @@ sptv.map = {
         var path = d3.geo.path().projection(null);
         var svg = d3.select("#map").append("svg").attr("width", width).attr("height", height).attr("class", "svg");   
 
-        d3.json("data/municipalities.json", function(d) { 
+        d3.json("data/municipalities_all.json", function(d) { 
             for(var i = 0; i<d.length; i++){
                 sptv.constants.rateMunicipality.set(d[i].id, +d[i].avg);
                 sptv.constants.rateLastMunicipality.set(d[i].id, +d[i].max);
@@ -296,7 +295,6 @@ sptv.helpers = {
 
     showLayer: function (){
         layer = sptv.activeLayer.base.cl + sptv.activeLayer.filter;
-        console.log("Show layer: " + layer );
         var layersArr = Object.keys(sptv.constants.layers);
         for(var i = 0, len = layersArr.length; i < len; i++){
             if (layersArr[i] != layer){
