@@ -8,10 +8,20 @@ $(document).ready(function(){
         handle: ".panel-heading"
     });    
     
-     $('input[type=radio][name=show]').change(function() {        
-         sptv.helpers.showLayer(this.value);
-         sptv.helpers.labelKey(sptv.constants.layers[this.value].mode);
+     $('input[type=radio][name=show]').change(function() {
+         sptv.activeLayer.base = sptv.constants.layers[this.value];
+         sptv.helpers.showLayer();
      });
+    
+    var $filterDay = $('.filter-day');    
+    $filterDay.click(function(){
+        $filterDay.removeClass('active');
+        $(this).addClass('active');
+        console.log($(this).attr('name'));
+        var filter = $(this).attr('name')
+        sptv.activeLayer.filter = filter;
+        sptv.helpers.showLayer();
+    });
     
     sptv.helpers.positionKey();
     
@@ -22,7 +32,7 @@ $(document).ready(function(){
 
 sptv.constants = {
     layers : {
-            "avgMunicipalities": 
+        "avgMunicipalities": 
                 {   
                     "cl" : "avgMunicipalities",
                     "rate": function(d){ return sptv.helpers.quantize.time(sptv.constants.rateMunicipality.get(d.id));},
@@ -31,7 +41,34 @@ sptv.constants = {
                     "data" : function(ch){return topojson.feature(ch, ch.objects.municipalities).features},
                     "mode" : "time"
                 },
-            "lastMunicipalities": 
+        "avgMunicipalitiesWeek": 
+                {   
+                    "cl" : "avgMunicipalitiesWeek",
+                    "rate": function(d){ return sptv.helpers.quantize.time(sptv.constants.rateMunicipalityWeek.get(d.id));},
+                    "tooltip": function(d){ return sptv.constants.municipalityName.get(d.id) + ': ' + sptv.helpers.showTime(sptv.constants.rateMunicipalityWeek.get(d.id))},
+                    "display": "initial",
+                    "data" : function(ch){return topojson.feature(ch, ch.objects.municipalities).features},
+                    "mode" : "time"
+                },
+        "avgMunicipalitiesWeekend": 
+                {   
+                    "cl" : "avgMunicipalitiesWeekend",
+                    "rate": function(d){ return sptv.helpers.quantize.time(sptv.constants.rateMunicipalityWeekend.get(d.id));},
+                    "tooltip": function(d){ return sptv.constants.municipalityName.get(d.id) + ': ' + sptv.helpers.showTime(sptv.constants.rateMunicipalityWeekend.get(d.id))},
+                    "display": "initial",
+                    "data" : function(ch){return topojson.feature(ch, ch.objects.municipalities).features},
+                    "mode" : "time"
+                },
+        "avgMunicipalitiesSun": 
+                {   
+                    "cl" : "avgMunicipalitiesSun",
+                    "rate": function(d){ return sptv.helpers.quantize.time(sptv.constants.rateMunicipalitySun.get(d.id));},
+                    "tooltip": function(d){ return sptv.constants.municipalityName.get(d.id) + ': ' + sptv.helpers.showTime(sptv.constants.rateMunicipalitySun.get(d.id))},
+                    "display": "initial",
+                    "data" : function(ch){return topojson.feature(ch, ch.objects.municipalities).features},
+                    "mode" : "time"
+                },
+        "lastMunicipalities": 
                 {   
                     "cl" : "lastMunicipalities",
                     "rate": function(d) { return sptv.helpers.quantize.time(sptv.constants.rateLastMunicipality.get(d.id)); },
@@ -40,7 +77,34 @@ sptv.constants = {
                     "data" : function(ch){return topojson.feature(ch, ch.objects.municipalities).features},
                     "mode" : "time"
                 },
-            "countMunicipalities": 
+        "lastMunicipalitiesWeek": 
+                {   
+                    "cl" : "lastMunicipalitiesWeek",
+                    "rate": function(d) { return sptv.helpers.quantize.time(sptv.constants.rateLastMunicipalityWeek.get(d.id)); },
+                    "tooltip": function(d){return sptv.constants.municipalityName.get(d.id) + ': ' + sptv.helpers.showTime(sptv.constants.rateLastMunicipalityWeek.get(d.id));},
+                    "display" : "none",
+                    "data" : function(ch){return topojson.feature(ch, ch.objects.municipalities).features},
+                    "mode" : "time"
+                },
+        "lastMunicipalitiesWeekend": 
+                {   
+                    "cl" : "lastMunicipalitiesWeekend",
+                    "rate": function(d) { return sptv.helpers.quantize.time(sptv.constants.rateLastMunicipalityWeekend.get(d.id)); },
+                    "tooltip": function(d){return sptv.constants.municipalityName.get(d.id) + ': ' + sptv.helpers.showTime(sptv.constants.rateLastMunicipalityWeekend.get(d.id));},
+                    "display" : "none",
+                    "data" : function(ch){return topojson.feature(ch, ch.objects.municipalities).features},
+                    "mode" : "time"
+                },
+        "lastMunicipalitiesSun": 
+                {   
+                    "cl" : "lastMunicipalitiesSun",
+                    "rate": function(d) { return sptv.helpers.quantize.time(sptv.constants.rateLastMunicipalitySun.get(d.id)); },
+                    "tooltip": function(d){return sptv.constants.municipalityName.get(d.id) + ': ' + sptv.helpers.showTime(sptv.constants.rateLastMunicipalitySun.get(d.id));},
+                    "display" : "none",
+                    "data" : function(ch){return topojson.feature(ch, ch.objects.municipalities).features},
+                    "mode" : "time"
+                },
+        "countMunicipalities": 
                 {   
                     "cl" : "countMunicipalities",
                     "rate": function(d) { return sptv.helpers.quantize.count(Math.log(sptv.constants.municipalityCountDepartures.get(d.id))); },
@@ -49,7 +113,34 @@ sptv.constants = {
                     "data" : function(ch){return topojson.feature(ch, ch.objects.municipalities).features},
                     "mode" : "log"
                 },
-            "departuresPerPerson": 
+        "countMunicipalitiesWeek": 
+                {   
+                    "cl" : "countMunicipalitiesWeek",
+                    "rate": function(d) { return sptv.helpers.quantize.count(Math.log(sptv.constants.municipalityCountDeparturesWeek.get(d.id))); },
+                    "tooltip": function(d){return sptv.constants.municipalityName.get(d.id) + ': ' + sptv.constants.municipalityCountDeparturesWeek.get(d.id);},
+                    "display" : "none",
+                    "data" : function(ch){return topojson.feature(ch, ch.objects.municipalities).features},
+                    "mode" : "log"
+                },
+        "countMunicipalitiesWeekend": 
+                {   
+                    "cl" : "countMunicipalitiesWeekend",
+                    "rate": function(d) { return sptv.helpers.quantize.count(Math.log(sptv.constants.municipalityCountDeparturesWeekend.get(d.id))); },
+                    "tooltip": function(d){return sptv.constants.municipalityName.get(d.id) + ': ' + sptv.constants.municipalityCountDeparturesWeekend.get(d.id);},
+                    "display" : "none",
+                    "data" : function(ch){return topojson.feature(ch, ch.objects.municipalities).features},
+                    "mode" : "log"
+                },
+        "countMunicipalitiesSun": 
+                {   
+                    "cl" : "countMunicipalitiesSun",
+                    "rate": function(d) { return sptv.helpers.quantize.count(Math.log(sptv.constants.municipalityCountDeparturesSun.get(d.id))); },
+                    "tooltip": function(d){return sptv.constants.municipalityName.get(d.id) + ': ' + sptv.constants.municipalityCountDeparturesSun.get(d.id);},
+                    "display" : "none",
+                    "data" : function(ch){return topojson.feature(ch, ch.objects.municipalities).features},
+                    "mode" : "log"
+                },
+        "departuresPerPerson": 
                 {   
                     "cl" : "departuresPerPerson",
                     "rate": function(d) { return sptv.helpers.quantize.density( (sptv.constants.municipalityCountDepartures.get(d.id)/sptv.constants.municipalityPopulation.get(d.id) )); },
@@ -58,25 +149,55 @@ sptv.constants = {
                     "data" : function(ch){return topojson.feature(ch, ch.objects.municipalities).features},
                     "mode" : "density"
                 },
-            "cantons": 
+        "departuresPerPersonWeek": 
                 {   
-                    "cl" : "cantons",
-                    "rate": function(d) { return sptv.helpers.quantize.time(sptv.constants.rateCanton.get(d.id)); },
-                    "tooltip": function(d){return sptv.helpers.showTime(sptv.constants.rateCanton.get(d.id));},
+                    "cl" : "departuresPerPersonWeek",
+                    "rate": function(d) { return sptv.helpers.quantize.density( (sptv.constants.municipalityCountDeparturesWeek.get(d.id)/sptv.constants.municipalityPopulation.get(d.id) )); },
+                    "tooltip": function(d){return sptv.constants.municipalityName.get(d.id) + ': ' +    (sptv.constants.municipalityCountDeparturesWeek.get(d.id)/sptv.constants.municipalityPopulation.get(d.id));},
                     "display" : "none",
-                    "data" : function(ch) {return topojson.feature(ch, ch.objects.cantons).features},
-                    "mode" : "time"
+                    "data" : function(ch){return topojson.feature(ch, ch.objects.municipalities).features},
+                    "mode" : "density"
+                },
+        "departuresPerPersonWeekend": 
+                {   
+                    "cl" : "departuresPerPersonWeekend",
+                    "rate": function(d) { return sptv.helpers.quantize.density( (sptv.constants.municipalityCountDeparturesWeekend.get(d.id)/sptv.constants.municipalityPopulation.get(d.id) )); },
+                    "tooltip": function(d){return sptv.constants.municipalityName.get(d.id) + ': ' +    (sptv.constants.municipalityCountDeparturesWeekend.get(d.id)/sptv.constants.municipalityPopulation.get(d.id));},
+                    "display" : "none",
+                    "data" : function(ch){return topojson.feature(ch, ch.objects.municipalities).features},
+                    "mode" : "density"
+                },
+        "departuresPerPersonSun": 
+                {   
+                    "cl" : "departuresPerPersonSun",
+                    "rate": function(d) { return sptv.helpers.quantize.density( (sptv.constants.municipalityCountDeparturesSun.get(d.id)/sptv.constants.municipalityPopulation.get(d.id) )); },
+                    "tooltip": function(d){return sptv.constants.municipalityName.get(d.id) + ': ' +    (sptv.constants.municipalityCountDeparturesSun.get(d.id)/sptv.constants.municipalityPopulation.get(d.id));},
+                    "display" : "none",
+                    "data" : function(ch){return topojson.feature(ch, ch.objects.municipalities).features},
+                    "mode" : "density"
                 }
         }, 
     rateMunicipality: d3.map(),
+    rateMunicipalityWeek: d3.map(),
+    rateMunicipalityWeekend: d3.map(),
+    rateMunicipalitySun: d3.map(),
     rateLastMunicipality: d3.map(),
-    rateCanton: d3.map(),
+    rateLastMunicipalityWeek: d3.map(),
+    rateLastMunicipalityWeekend: d3.map(),
+    rateLastMunicipalitySun: d3.map(),
     municipalityName: d3.map(),
     municipalityArea: d3.map(),
     municipalityPopulation: d3.map(),
-    municipalityCountDepartures: d3.map()
+    municipalityCountDepartures: d3.map(),
+    municipalityCountDeparturesWeek: d3.map(),
+    municipalityCountDeparturesWeekend: d3.map(),
+    municipalityCountDeparturesSun: d3.map()
 };
 
+sptv.activeLayer = {
+    base : sptv.constants.layers.avgMunicipalities,
+    filter : ""
+};
 
 sptv.map = {
     
@@ -96,13 +217,30 @@ sptv.map = {
                 sptv.constants.municipalityName.set(d[i].id, d[i].name);
             }
         });
-
-        d3.json("data/canton_avg.json", function(d) { 
+        
+        d3.json("data/municipalities_week.json", function(d) { 
             for(var i = 0; i<d.length; i++){
-                sptv.constants.rateCanton.set(d[i].id, +d[i].avg);
+                sptv.constants.rateMunicipalityWeek.set(d[i].id, +d[i].avg);
+                sptv.constants.rateLastMunicipalityWeek.set(d[i].id, +d[i].max);
+                sptv.constants.municipalityCountDeparturesWeek.set(d[i].id, +d[i].count_departures);
             }
         });
-
+        
+        d3.json("data/municipalities_we.json", function(d) { 
+            for(var i = 0; i<d.length; i++){
+                sptv.constants.rateMunicipalityWeekend.set(d[i].id, +d[i].avg);
+                sptv.constants.rateLastMunicipalityWeekend.set(d[i].id, +d[i].max);
+                sptv.constants.municipalityCountDeparturesWeekend.set(d[i].id, +d[i].count_departures);
+            }
+        });
+        
+        d3.json("data/municipalities_sun.json", function(d) { 
+            for(var i = 0; i<d.length; i++){
+                sptv.constants.rateMunicipalitySun.set(d[i].id, +d[i].avg);
+                sptv.constants.rateLastMunicipalitySun.set(d[i].id, +d[i].max);
+                sptv.constants.municipalityCountDeparturesSun.set(d[i].id, +d[i].count_departures);
+            }
+        });
 
         d3.json("data/ch.json", function(error, ch) { 
             drawCountry(ch);
@@ -156,7 +294,9 @@ sptv.helpers = {
             .range(d3.range(9).map(function(i) { return "q" + i + "-9";}))
     },
 
-    showLayer: function (layer){
+    showLayer: function (){
+        layer = sptv.activeLayer.base.cl + sptv.activeLayer.filter;
+        console.log("Show layer: " + layer );
         var layersArr = Object.keys(sptv.constants.layers);
         for(var i = 0, len = layersArr.length; i < len; i++){
             if (layersArr[i] != layer){
@@ -164,7 +304,8 @@ sptv.helpers = {
             } else {
                 this.unhide($('.'+ layersArr[i]));
             }
-        }
+        }        
+         sptv.helpers.labelKey(sptv.activeLayer.base.mode);
     },
 
     hide: function (cl){    
@@ -195,6 +336,10 @@ sptv.helpers = {
         var density = ['0-0.2','0.21-0.4','0.41-0.6','0.61-0.8','0.81-1','1.01-1.2','1.21-1.4','1.41-1.6','>1.6'];
 
         var keys = $('#key > .panel > .panel-body > p > small');
+        var keyTitle = $('#key > .panel > .panel-heading > h3');
+        
+        keyTitle.text(sptv.activeLayer.base.cl);
+        
         var m;
         
         switch(mode){

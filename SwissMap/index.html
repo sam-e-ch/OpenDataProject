@@ -25,7 +25,7 @@
                     <div id="key">                        
                         <div class="panel panel-default">
                           <div class="panel-heading">
-                            <h3 class="panel-title">Key</h3>
+                            <h3 class="panel-title">avgMunicipalities</h3>
                           </div>
                           <div class="panel-body">
                                 <p><span class="q0-9 keyfield"></span> <small>10:00-11:59</small></p>
@@ -39,9 +39,18 @@
                                 <p><span class="q8-9 keyfield"></span> <small>02:00-03-59</small></p>                            
                           </div>
                         </div>
-                    </div>  
+                    </div> 
+                    <div id="filter">
+                        
+                    <div id="day-filter" class="btn-group" role="group" aria-label="...">
+                      <button type="button" class="btn btn-default btn-grey active filter-day" name=""><small>All Days</small></button>
+                      <button type="button" class="btn btn-default btn-grey filter-day" name="Week"><small>Sun-Thur</small></button>
+                      <button type="button" class="btn btn-default btn-grey filter-day" name="Weekend"><small>Fri-Sat</small></button>
+                      <button type="button" class="btn btn-default btn-grey filter-day" name="Sun"><small>Sun</small></button>
+                    </div>
+                        
                     <div id="select-layer-group" class="btn-group">
-                      <button id="select-layer" type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown" aria-expanded="false" title="Select layer">
+                      <button id="select-layer" type="button" class="btn btn-default btn-grey dropdown-toggle" data-toggle="dropdown" aria-expanded="false" title="Select layer">
                         <span class="glyphicon glyphicon-menu-hamburger" aria-hidden="true"></span>
                       </button>
                       <ul id="layer-menu" class="dropdown-menu dropdown-menu-right" role="menu">
@@ -63,27 +72,16 @@
                             <input type="radio" name="show" id="showCount" value="countMunicipalities">
                             Number of departures per Municipality
                           </label>
-                        </li>
-                        <li class="radio">
-                          <label>
-                            <input type="radio" name="show" id="showCantons" value="cantons">
-                            Average last departure for Cantons
-                          </label>
-                        </li>                              
+                        </li>                            
                         <li class="radio">
                           <label>
                             <input type="radio" name="show" id="showDeparturesPerPerson" value="departuresPerPerson">
                             Departures per Person per Municipality
                           </label>
                         </li>  
-                        <li class="radio">
-                          <label>
-                            <input type="radio" name="show" id="showNone" value="none">
-                            None
-                          </label>
-                        </li>
                       </ul>
                     </div>
+                        
                 </div>                                   
                 </div>                
             </div>            
