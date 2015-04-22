@@ -58,6 +58,22 @@
  cursor: move;   
 }
 
+#select-layer{
+    background-color: #f5f5f5;
+}
+
+#select-layer-group{
+    position: relative;
+    top: 40px;
+    right: 5px;
+    float: right;
+}
+
+#layer-menu{
+    width: 300px;
+    padding-left: 5px;
+}
+
 .q0-9 {
     fill: #4100E5;
     background-color: #4100E5;

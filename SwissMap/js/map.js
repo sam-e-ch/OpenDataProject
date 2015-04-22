@@ -215,7 +215,7 @@ sptv.helpers = {
     positionKey: function (){
         var p = $('#map').position();
         $('#key').css({
-            top : p.top+5, 
+            top : p.top+40, 
             left: p.left+5
         });
     },

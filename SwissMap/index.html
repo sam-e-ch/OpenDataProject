@@ -39,65 +39,52 @@
                                 <p><span class="q8-9 keyfield"></span> <small>02:00-03-59</small></p>                            
                           </div>
                         </div>
-                    </div>
-                </div>
-                <div class="panel panel-default">
-                  <div class="panel-body">
-                      <div class="col-md-4">
-                        Show:
-                        <div class="radio">
+                    </div>  
+                    <div id="select-layer-group" class="btn-group">
+                      <button id="select-layer" type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown" aria-expanded="false" title="Select layer">
+                        <span class="glyphicon glyphicon-menu-hamburger" aria-hidden="true"></span>
+                      </button>
+                      <ul id="layer-menu" class="dropdown-menu dropdown-menu-right" role="menu">
+                        <h4>Select layer</h4>
+                        <li class="radio">
                           <label>
                             <input type="radio" name="show" id="showMunicipalities" value="avgMunicipalities" checked>
                             Average last departure for Municipalities
                           </label>
-                        </div>
-                        <div class="radio">
+                        </li>
+                        <li class="radio">
                           <label>
                             <input type="radio" name="show" id="showLastMunicipalities" value="lastMunicipalities">
                             Last departure for Municipalities
                           </label>
-                        </div>
-                        <div class="radio">
+                        </li>
+                        <li class="radio">
                           <label>
                             <input type="radio" name="show" id="showCount" value="countMunicipalities">
                             Number of departures per Municipality
                           </label>
-                        </div>
-                        <div class="radio">
+                        </li>
+                        <li class="radio">
                           <label>
                             <input type="radio" name="show" id="showCantons" value="cantons">
                             Average last departure for Cantons
                           </label>
-                        </div>                              
-                        <div class="radio">
+                        </li>                              
+                        <li class="radio">
                           <label>
                             <input type="radio" name="show" id="showDeparturesPerPerson" value="departuresPerPerson">
                             Departures per Person per Municipality
                           </label>
-                        </div>  
-                        <div class="radio">
+                        </li>  
+                        <li class="radio">
                           <label>
                             <input type="radio" name="show" id="showNone" value="none">
                             None
                           </label>
-                        </div>
+                        </li>
+                      </ul>
                     </div>
-                    <div class="col-md-4">
-                        <div class="checkbox">
-                            <label>
-                                <input id="toggleLakes" type="checkbox" checked="checked"> Toggle Lakes
-                            </label>
-                        </div>                   
-                    </div>                    
-                    <div class="col-md-4">
-                        <div class="checkbox">
-                            <label>
-                                <input id="toggleCantons" type="checkbox" checked="checked"> Toggle canton boundaries
-                            </label>
-                        </div>                   
-                    </div>
-                  </div>
-                </div>                    
+                </div>                                   
                 </div>                
             </div>            
         </div>
