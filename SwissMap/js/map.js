@@ -202,9 +202,14 @@ sptv.map = {
     
     draw: function() {    
         var width = $('#map').width(), height = 500;
+        var zoom = d3.behavior.zoom().scaleExtent([1,8]).on("zoom", zoomed);
         var country = d3.geo.path().projection(null);
         var path = d3.geo.path().projection(null);
         var svg = d3.select("#map").append("svg").attr("width", width).attr("height", height).attr("class", "svg");   
+        
+        var xTranslate = 0;
+        var yTranslate = 0;
+        var scale = 1;
 
         d3.json("data/municipalities_all.json", function(d) { 
             for(var i = 0; i<d.length; i++){
@@ -242,6 +247,7 @@ sptv.map = {
         });
 
         d3.json("data/ch.json", function(error, ch) { 
+            svg.call(zoom);
             drawCountry(ch);
             for(var layer in sptv.constants.layers){
                 drawLayer(ch, sptv.constants.layers[layer]);  
@@ -250,7 +256,7 @@ sptv.map = {
         }); 
 
         function drawCountry(ch){
-            svg.append("path").datum(topojson.feature(ch, ch.objects.country))
+            svg.append("g").append("path").datum(topojson.feature(ch, ch.objects.country))
                 .attr("class", "country").attr("d", country);   
         }
         
@@ -268,12 +274,20 @@ sptv.map = {
         }
 
         function drawCantonBorders(ch){
-            svg.append("path").datum(topojson.feature(ch, ch.objects.lakes))
+            svg.append("g").append("path").datum(topojson.feature(ch, ch.objects.lakes))
                 .attr("class", "lake").attr("d", path);  
             
-            svg.append("path")
+            svg.append("g").append("path")
                 .datum(topojson.mesh(ch, ch.objects.cantons, function(a, b) { return a !== b; }))
                 .attr("class", "canton-boundaries").attr("d", path);   
+        }
+        
+        function zoomed(){
+            scale = d3.event.scale;
+            xTranslate = d3.event.translate[0];
+            yTranslate = d3.event.translate[1];
+            console.log(d3.event.translate);
+            $('g').attr("transform", "translate(" + xTranslate + ", " + yTranslate + ") scale(" + scale + ")");
         }
     }
 };
