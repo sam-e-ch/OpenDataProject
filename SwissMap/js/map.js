@@ -286,7 +286,6 @@ sptv.map = {
             scale = d3.event.scale;
             xTranslate = d3.event.translate[0];
             yTranslate = d3.event.translate[1];
-            console.log(d3.event.translate);
             $('g').attr("transform", "translate(" + xTranslate + ", " + yTranslate + ") scale(" + scale + ")");
         }
     }
