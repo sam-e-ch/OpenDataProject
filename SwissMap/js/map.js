@@ -249,7 +249,7 @@ sptv.helpers = {
         
         var m = modes[mode];
 
-        for(var i=0; i<keys.length;i++){
+        for(var i=0; i<keys.length-1;i++){
                 $(keys[i]).text(m[i]); 
         }
     },
