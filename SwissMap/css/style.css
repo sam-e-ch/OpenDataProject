@@ -17,22 +17,8 @@
     stroke-opacity: 0.7;
     z-index: 2;
 } 
-.avgMunicipalities,
-.avgMunicipalitiesWeek,
-.avgMunicipalitiesWeekend,
-.avgMunicipalitiesSun,
-.lastMunicipalities,
-.lastMunicipalitiesWeek,
-.lastMunicipalitiesWeekend,
-.lastMunicipalitiesSun,
-.countMunicipalities,
-.countMunicipalitiesWeek,
-.countMunicipalitiesWeekend,
-.countMunicipalitiesSun,
-.departuresPerPerson,
-.departuresPerPersonWeek,
-.departuresPerPersonWeekend,
-.departuresPerPersonSun, .municipality{
+
+.municipality{
     fill: none;      
     stroke: #666;
     stroke-width: .3;
@@ -88,6 +74,8 @@
     width: 300px;
     padding-left: 5px;
 }
+
+/***********Municipalities ratings************/
 
 .q0-9 {
     fill: #4100E5;
