@@ -125,3 +125,8 @@
     fill: #BF0009;
     background-color: #BF0009;
 }
+
+.no-data{
+   fill: #ccc; 
+   background-color: #ccc;
+}

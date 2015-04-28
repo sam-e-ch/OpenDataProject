@@ -195,77 +195,12 @@ var closeConnection = function() {
     connection.end();   
 };
 
-
-function generateMunicipalitiesWeekFile(){
-    console.log('Generating municipalities.json. This may take a while!');
-     connection.query("SELECT temp.municipality AS id, temp.name AS 'name', temp.area AS 'area', temp.population AS 'population', AVG(temp.max_departure) AS 'avg', MAX(temp.max_departure) AS 'max', SUM(temp.count) AS 'count_departures' FROM (SELECT departures.trainstation, MAX(CASE WHEN departures.departure < 400 THEN departures.departure + 2400 WHEN departures.departure > 2800 THEN departures.departure - 2400 ELSE departures.departure END) AS max_departure, municipality.municipality, municipality.name AS 'name', municipality.area AS 'area', municipality.population AS 'population', COUNT(departures.departures_ID) AS count FROM departures INNER JOIN (SELECT trainstations.trainstations_ID AS trainstation, municipalities.municipalities_ID AS municipality, municipalities.name AS 'name', municipalities.area AS 'area', municipalities.population AS 'population' FROM trainstations INNER JOIN municipalities ON municipalities.municipalities_ID = trainstations.municipality) municipality ON departures.trainstation = municipality.trainstation INNER JOIN bitfield ON departures.bitfield = bitfield.id WHERE sun AND mon AND tue AND wed AND thur GROUP BY departures.trainstation) temp GROUP BY temp.municipality;",function(err,rows){
-            if(!err) {
-                var fs = require('fs');
-                fs.writeFile("data/municipalities_week.json", JSON.stringify(rows), function(err) {
-                    if(err) {
-                        return console.log(err);
-                    }
-                    console.log("The file was saved!");
-                }); 
-            }          
-            event.emit('taskComplete');
-        });
-}
-
-function generateMunicipalitiesWeekendFile(){
-    console.log('Generating municipalities.json. This may take a while!');
-     connection.query("SELECT temp.municipality AS id, temp.name AS 'name', temp.area AS 'area', temp.population AS 'population', AVG(temp.max_departure) AS 'avg', MAX(temp.max_departure) AS 'max', SUM(temp.count) AS 'count_departures' FROM (SELECT departures.trainstation, MAX(CASE WHEN departures.departure < 400 THEN departures.departure + 2400 WHEN departures.departure > 2800 THEN departures.departure - 2400 ELSE departures.departure END) AS max_departure, municipality.municipality, municipality.name AS 'name', municipality.area AS 'area', municipality.population AS 'population', COUNT(departures.departures_ID) AS count FROM departures INNER JOIN (SELECT trainstations.trainstations_ID AS trainstation, municipalities.municipalities_ID AS municipality, municipalities.name AS 'name', municipalities.area AS 'area', municipalities.population AS 'population' FROM trainstations INNER JOIN municipalities ON municipalities.municipalities_ID = trainstations.municipality) municipality ON departures.trainstation = municipality.trainstation INNER JOIN bitfield ON departures.bitfield = bitfield.id WHERE fri AND sat GROUP BY departures.trainstation) temp GROUP BY temp.municipality;",function(err,rows){
-            if(!err) {
-                var fs = require('fs');
-                fs.writeFile("data/municipalities_we.json", JSON.stringify(rows), function(err) {
-                    if(err) {
-                        return console.log(err);
-                    }
-                    console.log("The file was saved!");
-                }); 
-            }          
-            event.emit('taskComplete');
-        });
-}
-
-function generateMunicipalitiesSunFile(){
-    console.log('Generating municipalities.json. This may take a while!');
-     connection.query("SELECT temp.municipality AS id, temp.name AS 'name', temp.area AS 'area', temp.population AS 'population', AVG(temp.max_departure) AS 'avg', MAX(temp.max_departure) AS 'max', SUM(temp.count) AS 'count_departures' FROM (SELECT departures.trainstation, MAX(CASE WHEN departures.departure < 400 THEN departures.departure + 2400 WHEN departures.departure > 2800 THEN departures.departure - 2400 ELSE departures.departure END) AS max_departure, municipality.municipality, municipality.name AS 'name', municipality.area AS 'area', municipality.population AS 'population', COUNT(departures.departures_ID) AS count FROM departures INNER JOIN (SELECT trainstations.trainstations_ID AS trainstation, municipalities.municipalities_ID AS municipality, municipalities.name AS 'name', municipalities.area AS 'area', municipalities.population AS 'population' FROM trainstations INNER JOIN municipalities ON municipalities.municipalities_ID = trainstations.municipality) municipality ON departures.trainstation = municipality.trainstation INNER JOIN bitfield ON departures.bitfield = bitfield.id WHERE sun GROUP BY departures.trainstation) temp GROUP BY temp.municipality;",function(err,rows){
-            if(!err) {
-                var fs = require('fs');
-                fs.writeFile("data/municipalities_sun.json", JSON.stringify(rows), function(err) {
-                    if(err) {
-                        return console.log(err);
-                    }
-                    console.log("The file was saved!");
-                }); 
-            }          
-            event.emit('taskComplete');
-        });
-}
-
 function generateMunicipalitiesAllFile(){
     console.log('Generating municipalities.json. This may take a while!');
-     connection.query("SELECT temp.municipality AS id, temp.name AS 'name', temp.area AS 'area', temp.population AS 'population', AVG(temp.max_departure) AS 'avg', MAX(temp.max_departure) AS 'max', SUM(temp.count) AS 'count_departures' FROM (SELECT departures.trainstation, MAX(CASE WHEN departures.departure < 400 THEN departures.departure + 2400 WHEN departures.departure > 2800 THEN departures.departure - 2400 ELSE departures.departure END) AS max_departure, municipality.municipality, municipality.name AS 'name', municipality.area AS 'area', municipality.population AS 'population', COUNT(departures.departures_ID) AS count FROM departures INNER JOIN (SELECT trainstations.trainstations_ID AS trainstation, municipalities.municipalities_ID AS municipality, municipalities.name AS 'name', municipalities.area AS 'area', municipalities.population AS 'population' FROM trainstations INNER JOIN municipalities ON municipalities.municipalities_ID = trainstations.municipality) municipality ON departures.trainstation = municipality.trainstation INNER JOIN bitfield ON departures.bitfield = bitfield.id WHERE sun AND mon AND tue AND wed AND thur AND fri AND sat GROUP BY departures.trainstation) temp GROUP BY temp.municipality;",function(err,rows){
+     connection.query("SELECT municipalities_ID as 'id', name, area, population, avg_all, max_all, count_departures_all, avg_week, max_week, count_departures_week, avg_weekend, max_weekend, count_departures_weekend, avg_sun, max_sun, count_departures_sun FROM municipalities LEFT JOIN (SELECT temp.municipality AS id, AVG(temp.max_departure) AS 'avg_week', MAX(temp.max_departure) AS 'max_week', SUM(temp.count) AS 'count_departures_week' FROM (SELECT departures.trainstation, MAX(CASE WHEN departures.departure < 400 THEN departures.departure + 2400 WHEN departures.departure > 2800 THEN departures.departure - 2400 ELSE departures.departure END) AS max_departure, trainstations.municipality, COUNT(departures.departures_ID) AS count FROM departures INNER JOIN trainstations ON departures.trainstation = trainstations.trainstations_ID INNER JOIN bitfield ON departures.bitfield = bitfield.id WHERE sun OR mon OR tue OR wed OR thur GROUP BY departures.trainstation) temp GROUP BY temp.municipality) week ON week.id = municipalities.municipalities_ID LEFT JOIN (SELECT temp.municipality AS id, AVG(temp.max_departure) AS 'avg_weekend', MAX(temp.max_departure) AS 'max_weekend', SUM(temp.count) AS 'count_departures_weekend' FROM (SELECT departures.trainstation, MAX(CASE WHEN departures.departure < 400 THEN departures.departure + 2400 WHEN departures.departure > 2800 THEN departures.departure - 2400 ELSE departures.departure END) AS max_departure, trainstations.municipality, COUNT(departures.departures_ID) AS count FROM departures INNER JOIN trainstations ON departures.trainstation = trainstations.trainstations_ID INNER JOIN bitfield ON departures.bitfield = bitfield.id WHERE fri OR sat GROUP BY departures.trainstation) temp GROUP BY temp.municipality) weekend ON weekend.id = municipalities.municipalities_ID LEFT JOIN (SELECT temp.municipality AS id, AVG(temp.max_departure) AS 'avg_sun', MAX(temp.max_departure) AS 'max_sun', SUM(temp.count) AS 'count_departures_sun' FROM (SELECT departures.trainstation, MAX(CASE WHEN departures.departure < 400 THEN departures.departure + 2400 WHEN departures.departure > 2800 THEN departures.departure - 2400 ELSE departures.departure END) AS max_departure, trainstations.municipality, COUNT(departures.departures_ID) AS count FROM departures INNER JOIN trainstations ON departures.trainstation = trainstations.trainstations_ID INNER JOIN bitfield ON departures.bitfield = bitfield.id WHERE sun GROUP BY departures.trainstation) temp GROUP BY temp.municipality) sun ON sun.id = municipalities.municipalities_ID LEFT JOIN (SELECT temp.municipality AS id, AVG(temp.max_departure) AS 'avg_all', MAX(temp.max_departure) AS 'max_all', SUM(temp.count) AS 'count_departures_all' FROM (SELECT departures.trainstation, MAX(CASE WHEN departures.departure < 400 THEN departures.departure + 2400 WHEN departures.departure > 2800 THEN departures.departure - 2400 ELSE departures.departure END) AS max_departure, trainstations.municipality, COUNT(departures.departures_ID) AS count FROM departures INNER JOIN trainstations ON departures.trainstation = trainstations.trainstations_ID INNER JOIN bitfield ON departures.bitfield = bitfield.id WHERE sun OR mon OR tue OR wed OR thur OR fri OR sat GROUP BY departures.trainstation) temp GROUP BY temp.municipality) all_days ON all_days.id = municipalities.municipalities_ID;",function(err,rows){
             if(!err) {
                 var fs = require('fs');
-                fs.writeFile("data/municipalities_all.json", JSON.stringify(rows), function(err) {
-                    if(err) {
-                        return console.log(err);
-                    }
-                    console.log("The file was saved!");
-                }); 
-            }          
-            event.emit('taskComplete');
-        });
-}
-
-function getAvgDeparturesCanton(){
-    console.log('Generating canton_avg.json. This may take a while!');
-     connection.query("SELECT temp.canton as id, AVG(temp.max_departure) as avg FROM (SELECT departures.trainstation, MAX(CASE WHEN departures.departure < 400 THEN departures.departure + 2400 WHEN departures.departure > 2800 THEN departures.departure - 2400 ELSE departures.departure END) AS max_departure, municipality.municipality, municipality.canton FROM departures INNER JOIN (SELECT trainstations.trainstations_ID AS trainstation, municipalities.municipalities_ID AS municipality, municipalities.canton AS canton, municipalities.name AS 'name' FROM trainstations, municipalities WHERE municipalities.municipalities_ID = trainstations.municipality GROUP BY trainstations.trainstations_ID) municipality ON departures.trainstation = municipality.trainstation GROUP BY departures.trainstation) temp WHERE temp.max_departure < 2800 GROUP BY temp.canton;",function(err,rows){
-            if(!err) {
-                var fs = require('fs');
-                fs.writeFile("data/canton_avg.json", JSON.stringify(rows), function(err) {
+                fs.writeFile("data/municipalities.json", JSON.stringify(rows), function(err) {
                     if(err) {
                         return console.log(err);
                     }
@@ -374,12 +309,6 @@ for (var i = 2; i < process.argv.length; i++){
             tasks.push(processTrainstations);
             tasks.push(processDepartures);
             break;
-    case 'setup': 
-            tasks.push(setupDB);    
-            tasks.push(processMunicipalities);
-            tasks.push(processTrainstations);
-            tasks.push(processDepartures); 
-            break;
     case 'departures':            
             tasks.push(processDepartures);
             break;
@@ -392,26 +321,9 @@ for (var i = 2; i < process.argv.length; i++){
     case '-b':
             tasks.push(processBitfield);
             break;
-    case '-c':
-            tasks.push(getAvgDeparturesCanton);
-            break;
-    case '-w':
-            tasks.push(generateMunicipalitiesWeekFile);
-            break;
-    case '-we':
-            tasks.push(generateMunicipalitiesWeekendFile);
-            break;
-    case '-a':
+    case '-g':
             tasks.push(generateMunicipalitiesAllFile);
             break;
-    case '-s':
-            tasks.push(generateMunicipalitiesSunFile);
-            break;
-    case '-m':
-            tasks.push(generateMunicipalitiesWeekFile);
-            tasks.push(generateMunicipalitiesWeekendFile);
-            tasks.push(generateMunicipalitiesAllFile);
-            tasks.push(generateMunicipalitiesSunFile);
     }
     
     

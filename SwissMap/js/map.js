@@ -34,29 +34,53 @@ sptv.constants = {
         "avgMunicipalities": 
                 {   
                     "cl" : "avgMunicipalities",
-                    "rate": function(id){ return sptv.helpers.quantize.time(sptv.constants.rateMunicipality[sptv.activeLayer.filter].get(id));},
-                    "tooltip": function(id){ return sptv.constants.municipalityName.get(id) + ': ' + sptv.helpers.showTime(sptv.constants.rateMunicipality[sptv.activeLayer.filter].get(id))},
+                    "rate": function(id){ 
+                        var r = sptv.constants.rateMunicipality[sptv.activeLayer.filter].get(id);
+                        return r?sptv.helpers.quantize.time(r):"no-data";},
+                    "tooltip": function(id){ 
+                        var r = sptv.constants.rateMunicipality[sptv.activeLayer.filter].get(id);
+                        var t = r?sptv.helpers.showTime(r):"No data aviable.";
+                        return sptv.constants.municipalityName.get(id) + ': ' + t
+                    },
                     "mode" : "time"
                 },
         "lastMunicipalities": 
                 {   
                     "cl" : "lastMunicipalities",
-                    "rate": function(id) { return sptv.helpers.quantize.time(sptv.constants.rateLastMunicipality[sptv.activeLayer.filter].get(id)); },
-                    "tooltip": function(id){return sptv.constants.municipalityName.get(id) + ': ' + sptv.helpers.showTime(sptv.constants.rateLastMunicipality[sptv.activeLayer.filter].get(id));},
+                    "rate": function(id) { 
+                        var r = sptv.constants.rateLastMunicipality[sptv.activeLayer.filter].get(id);                        
+                        return r?sptv.helpers.quantize.time(r):"no-data"; },
+                    "tooltip": function(id){
+                        var r = sptv.constants.rateLastMunicipality[sptv.activeLayer.filter].get(id);
+                        var t = r?sptv.helpers.showTime(r):"No data aviable.";
+                        return sptv.constants.municipalityName.get(id) + ': ' + t;
+                    },
                     "mode" : "time"
                 },
         "countMunicipalities": 
                 {   
                     "cl" : "countMunicipalities",
-                    "rate": function(id) { return sptv.helpers.quantize.count(Math.log(sptv.constants.municipalityCountDepartures[sptv.activeLayer.filter].get(id))); },
-                    "tooltip": function(id){return sptv.constants.municipalityName.get(id) + ': ' + sptv.constants.municipalityCountDepartures[sptv.activeLayer.filter].get(id);},
+                    "rate": function(id) {
+                        var r = sptv.constants.municipalityCountDepartures[sptv.activeLayer.filter].get(id);
+                        return r?sptv.helpers.quantize.count(Math.log(r)):"no-data"; 
+                    },
+                    "tooltip": function(id){
+                        return sptv.constants.municipalityName.get(id) + ': ' + (sptv.constants.municipalityCountDepartures[sptv.activeLayer.filter].get(id)||"No data aviable.");
+                    },
                     "mode" : "log"
                 },
         "departuresPerPerson": 
                 {   
                     "cl" : "departuresPerPerson",
-                    "rate": function(id) { return sptv.helpers.quantize.density( (sptv.constants.municipalityCountDepartures[sptv.activeLayer.filter].get(id)/sptv.constants.municipalityPopulation.get(id) )); },
-                    "tooltip": function(id){return sptv.constants.municipalityName.get(id) + ': ' +    (sptv.constants.municipalityCountDepartures[sptv.activeLayer.filter].get(id)/sptv.constants.municipalityPopulation.get(id));},
+                    "rate": function(id) { 
+                        var r = sptv.constants.municipalityCountDepartures[sptv.activeLayer.filter].get(id);
+                        return r?sptv.helpers.quantize.density((r/sptv.constants.municipalityPopulation.get(id))):"no-data"; 
+                    },
+                    "tooltip": function(id){
+                        var r = sptv.constants.municipalityCountDepartures[sptv.activeLayer.filter].get(id);
+                        var t = r?(r/sptv.constants.municipalityPopulation.get(id)):"No data aviable.";
+                        return sptv.constants.municipalityName.get(id) + ': ' + t;
+                    },
                     "mode" : "density"
                 },
         }, 
@@ -101,39 +125,27 @@ sptv.map = {
         var yTranslate = 0;
         var scale = 1;
 
-        d3.json("data/municipalities_all.json", function(d) { 
+        d3.json("data/municipalities.json", function(d) { 
             for(var i = 0; i<d.length; i++){
-                sptv.constants.rateMunicipality.all.set(d[i].id, +d[i].avg);
-                sptv.constants.rateLastMunicipality.all.set(d[i].id, +d[i].max);
-                sptv.constants.municipalityCountDepartures.all.set(d[i].id, +d[i].count_departures);
+                sptv.constants.rateMunicipality.all.set(d[i].id, +d[i].avg_all);
+                sptv.constants.rateLastMunicipality.all.set(d[i].id, +d[i].max_all);
+                sptv.constants.municipalityCountDepartures.all.set(d[i].id, +d[i].count_departures_all);
+                
+                sptv.constants.rateMunicipality.week.set(d[i].id, +d[i].avg_week);
+                sptv.constants.rateLastMunicipality.week.set(d[i].id, +d[i].max_week);
+                sptv.constants.municipalityCountDepartures.week.set(d[i].id, +d[i].count_departures_week);
+                
+                sptv.constants.rateMunicipality.weekend.set(d[i].id, +d[i].avg_weekend);
+                sptv.constants.rateLastMunicipality.weekend.set(d[i].id, +d[i].max_weekend);
+                sptv.constants.municipalityCountDepartures.weekend.set(d[i].id, +d[i].count_departures_weekend);
+                
+                sptv.constants.rateMunicipality.sun.set(d[i].id, +d[i].avg_sun);
+                sptv.constants.rateLastMunicipality.sun.set(d[i].id, +d[i].max_sun);
+                sptv.constants.municipalityCountDepartures.sun.set(d[i].id, +d[i].count_departures_sun);
                 
                 sptv.constants.municipalityArea.set(d[i].id, +d[i].area);
                 sptv.constants.municipalityPopulation.set(d[i].id, +d[i].population);
                 sptv.constants.municipalityName.set(d[i].id, d[i].name);
-            }
-        });
-        
-        d3.json("data/municipalities_week.json", function(d) { 
-            for(var i = 0; i<d.length; i++){
-                sptv.constants.rateMunicipality.week.set(d[i].id, +d[i].avg);
-                sptv.constants.rateLastMunicipality.week.set(d[i].id, +d[i].max);
-                sptv.constants.municipalityCountDepartures.week.set(d[i].id, +d[i].count_departures);
-            }
-        });
-        
-        d3.json("data/municipalities_we.json", function(d) { 
-            for(var i = 0; i<d.length; i++){
-                sptv.constants.rateMunicipality.weekend.set(d[i].id, +d[i].avg);
-                sptv.constants.rateLastMunicipality.weekend.set(d[i].id, +d[i].max);
-                sptv.constants.municipalityCountDepartures.weekend.set(d[i].id, +d[i].count_departures);
-            }
-        });
-        
-        d3.json("data/municipalities_sun.json", function(d) { 
-            for(var i = 0; i<d.length; i++){
-                sptv.constants.rateMunicipality.sun.set(d[i].id, +d[i].avg);
-                sptv.constants.rateLastMunicipality.sun.set(d[i].id, +d[i].max);
-                sptv.constants.municipalityCountDepartures.sun.set(d[i].id, +d[i].count_departures);
             }
         });
 
@@ -159,7 +171,8 @@ sptv.map = {
                 .enter()
                 .append("path")
                 .attr("id" , function(d) { return ("muni-" + d.id);})
-                .attr("d", path);   
+                .attr("d", path)
+                .append("title");   
         }
 
         function drawCantonBorders(ch){
@@ -184,7 +197,7 @@ sptv.helpers = {
     quantize: {
        time: d3.scale.quantize()
             .domain([1000, 2800])
-            .range(d3.range(9).map(function(i) { return "q" + i + "-9";})),
+            .range(d3.range(9).map(function(v) { return "q" + v + "-9";})),
 
        count: d3.scale.quantize()
             .domain([1, 13.5])
@@ -197,14 +210,13 @@ sptv.helpers = {
 
     showLayer: function (){
         var layer = sptv.activeLayer.base;
-        console.log(layer);
         var muni = $('.municipality > path');
         var elem;
         var id;
         for(var i = 0, l = muni.length; i<l; i++){
             elem = $(muni[i]);
             id = parseInt(elem.attr("id").substr(5, elem.attr("id").length));
-            elem.append($("<title>" + layer.tooltip(id) + "</title>"));  
+            elem.children("title").text(layer.tooltip(id));  
             elem.attr("class", layer.rate(id));  
         }
         $("svg").html($("svg").html());
@@ -225,28 +237,17 @@ sptv.helpers = {
     },
 
     labelKey: function (mode){
-        var time = ['10:00-11:59', '12:00-13:59', '14:00-15:59', '16:00-17:59', '18:00-19:59', '20:00-21:59','22:00-23:59', '00:00-01:59', '02:00-03:59'];
-        var log = [1,4,16,65,260,1043,4188,16815,67508];
-        var density = ['0-0.2','0.21-0.4','0.41-0.6','0.61-0.8','0.81-1','1.01-1.2','1.21-1.4','1.41-1.6','>1.6'];
-
+        var modes = {
+            time : ['10:00-11:59', '12:00-13:59', '14:00-15:59', '16:00-17:59', '18:00-19:59', '20:00-21:59','22:00-23:59', '00:00-01:59', '02:00-03:59'],
+            log : [1,4,16,65,260,1043,4188,16815,67508],
+            density : ['0-0.2','0.21-0.4','0.41-0.6','0.61-0.8','0.81-1','1.01-1.2','1.21-1.4','1.41-1.6','>1.6']
+        };
         var keys = $('#key > .panel > .panel-body > p > small');
         var keyTitle = $('#key > .panel > .panel-heading > h3');
         
         keyTitle.text(sptv.activeLayer.base.cl);
         
-        var m;
-        
-        switch(mode){
-            case "log":
-                m = log;
-                break;
-            case "time":
-                m = time;
-                break;
-            case "density":
-                m = density;
-                break;
-        }
+        var m = modes[mode];
 
         for(var i=0; i<keys.length;i++){
                 $(keys[i]).text(m[i]); 
