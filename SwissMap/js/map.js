@@ -42,7 +42,8 @@ sptv.constants = {
                         var t = r?sptv.helpers.showTime(r):"No data aviable.";
                         return sptv.constants.municipalityName.get(id) + ': ' + t
                     },
-                    "mode" : "time"
+                    "mode" : "time",
+                    "name" : "Avg last departure"
                 },
         "lastMunicipalities": 
                 {   
@@ -55,7 +56,8 @@ sptv.constants = {
                         var t = r?sptv.helpers.showTime(r):"No data aviable.";
                         return sptv.constants.municipalityName.get(id) + ': ' + t;
                     },
-                    "mode" : "time"
+                    "mode" : "time",
+                    "name" : "Last departure"
                 },
         "countMunicipalities": 
                 {   
@@ -67,7 +69,8 @@ sptv.constants = {
                     "tooltip": function(id){
                         return sptv.constants.municipalityName.get(id) + ': ' + (sptv.constants.municipalityCountDepartures[sptv.activeLayer.filter].get(id)||"No data aviable.");
                     },
-                    "mode" : "log"
+                    "mode" : "log",
+                    "name" : "# of departures"
                 },
         "departuresPerPerson": 
                 {   
@@ -81,7 +84,8 @@ sptv.constants = {
                         var t = r?(r/sptv.constants.municipalityPopulation.get(id)):"No data aviable.";
                         return sptv.constants.municipalityName.get(id) + ': ' + t;
                     },
-                    "mode" : "density"
+                    "mode" : "density",
+                    "name" : "Departures/Person"
                 },
         }, 
     rateMunicipality: {
@@ -245,7 +249,7 @@ sptv.helpers = {
         var keys = $('#key > .panel > .panel-body > p > small');
         var keyTitle = $('#key > .panel > .panel-heading > h3');
         
-        keyTitle.text(sptv.activeLayer.base.cl);
+        keyTitle.text(sptv.activeLayer.base.name);
         
         var m = modes[mode];
 
