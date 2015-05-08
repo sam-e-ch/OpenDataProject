@@ -39,7 +39,7 @@ sptv.constants = {
                         return r?sptv.helpers.quantize.time(r):"no-data";},
                     "tooltip": function(id){ 
                         var r = sptv.constants.rateMunicipality[sptv.activeLayer.filter].get(id);
-                        var t = r?sptv.helpers.showTime(r):"No data aviable.";
+                        var t = r?sptv.helpers.showTime(r):"No data available.";
                         return sptv.constants.municipalityName.get(id) + ': ' + t
                     },
                     "mode" : "time",
@@ -53,7 +53,7 @@ sptv.constants = {
                         return r?sptv.helpers.quantize.time(r):"no-data"; },
                     "tooltip": function(id){
                         var r = sptv.constants.rateLastMunicipality[sptv.activeLayer.filter].get(id);
-                        var t = r?sptv.helpers.showTime(r):"No data aviable.";
+                        var t = r?sptv.helpers.showTime(r):"No data available.";
                         return sptv.constants.municipalityName.get(id) + ': ' + t;
                     },
                     "mode" : "time",
@@ -67,7 +67,7 @@ sptv.constants = {
                         return r?sptv.helpers.quantize.count(Math.log(r)):"no-data"; 
                     },
                     "tooltip": function(id){
-                        return sptv.constants.municipalityName.get(id) + ': ' + (sptv.constants.municipalityCountDepartures[sptv.activeLayer.filter].get(id)||"No data aviable.");
+                        return sptv.constants.municipalityName.get(id) + ': ' + (sptv.constants.municipalityCountDepartures[sptv.activeLayer.filter].get(id)||"No data available.");
                     },
                     "mode" : "log",
                     "name" : "# of departures"
@@ -81,7 +81,7 @@ sptv.constants = {
                     },
                     "tooltip": function(id){
                         var r = sptv.constants.municipalityCountDepartures[sptv.activeLayer.filter].get(id);
-                        var t = r?(r/sptv.constants.municipalityPopulation.get(id)):"No data aviable.";
+                        var t = r?(r/sptv.constants.municipalityPopulation.get(id)):"No data available.";
                         return sptv.constants.municipalityName.get(id) + ': ' + t;
                     },
                     "mode" : "density",
