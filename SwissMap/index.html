@@ -20,7 +20,10 @@
     <div class="row">
         <div class="col-md-12">
             <div class="container">                
-                <h1>Swiss Public Transportation Visualization</h1>
+                <div class="row">
+                    <div class="col-md-10"><h1>Swiss Public Transportation Visualization</h1></div>
+                    <div class="col-md-2" style="margin-top: 5px;"><a href="https://github.com/GodlikeSpam0r/OpenDataProject"><img src="./images/GitHub-Mark-32px.png" width="24" height="24" /> View Source Code</a></div>
+                </div>
                 <div id="map">
                     <div id="key">                        
                         <div class="panel panel-default">
@@ -41,9 +44,11 @@
                           </div>
                         </div>
                     </div> 
-                    <div id="filter">
+                    <div id="filter">     
                         
-                    <div id="day-filter" class="btn-group" role="group">
+                    <span><a class="btn btn-default btn-grey" href="#info"><span class="glyphicon glyphicon-info-sign"></span></a></span>
+                        
+                    <div id="day-filter" class="btn-group" role="group" title="Select day filter" data-toggle="tooltip" data-placement="bottom">
                       <button type="button" class="btn btn-default btn-grey active filter-day" name="all"><small>All Days</small></button>
                       <button type="button" class="btn btn-default btn-grey filter-day" name="week"><small>Sun-Thur</small></button>
                       <button type="button" class="btn btn-default btn-grey filter-day" name="weekend"><small>Fri-Sat</small></button>
@@ -51,41 +56,41 @@
                     </div>
                         
                     <div id="select-layer-group" class="btn-group">
-                      <button id="select-layer" type="button" class="btn btn-default btn-grey dropdown-toggle" data-toggle="dropdown" aria-expanded="false" title="Select layer">
-                        <span class="glyphicon glyphicon-menu-hamburger" aria-hidden="true"></span>
+                      <button id="select-layer" type="button" class="btn btn-default btn-grey dropdown-toggle" data-toggle="dropdown" aria-expanded="false">
+                        <span data-toggle="tooltip" title="Select layer" data-placement="bottom" class="glyphicon glyphicon-menu-hamburger" aria-hidden="true"></span>
                       </button>
                       <ul id="layer-menu" class="dropdown-menu dropdown-menu-right" role="menu">
                         <h4>Select layer</h4>
                         <li class="radio">
-                          <label>
+                          <label title="This filter shows the arithmetic average of the last departure of each station of a municipality." data-toggle="tooltip" data-placement="bottom">
                             <input type="radio" name="show" id="showMunicipalities" value="avgMunicipalities" checked>
                             Average last departure for Municipalities
                           </label>
                         </li>
                         <li class="radio">
-                          <label>
+                          <label title="This view lets the user see, when the ultimate last departure in each municipality will be." data-toggle="tooltip" data-placement="bottom">
                             <input type="radio" name="show" id="showLastMunicipalities" value="lastMunicipalities">
                             Last departure for Municipalities
                           </label>
                         </li>
                         <li class="radio">
-                          <label>
+                          <label title="In this set of data, each and every departure has been counted and put into perspective for each municipality, a logarithmic scale has been implemented." data-toggle="tooltip" data-placement="bottom">
                             <input type="radio" name="show" id="showCount" value="countMunicipalities">
                             Number of departures per Municipality
                           </label>
                         </li>                            
                         <li class="radio">
-                          <label>
+                          <label title="In this specific filter, the relation between the inhabitants and the departures in each municipality is shown. " data-toggle="tooltip" data-placement="bottom">
                             <input type="radio" name="show" id="showDeparturesPerPerson" value="departuresPerPerson">
                             Departures per Person per Municipality
                           </label>
                         </li>  
                       </ul>
-                    </div>
-                        
+                    </div>                        
                 </div>                                   
                 </div>  
                 <div class="well">
+                    <a name="info"></a>
                     <p>
                         <h4>About the app</h4>
                     With this app, we aim to visualise the Swiss public transport system. We achieve this by using the open timetable data found on <a href="http://www.fahrplanfelder.ch/de/fahrplandaten/" target="_blank">www.fahrplanfelder.ch</a>. To draw the Swiss map, we used the swissBOUNDARIES3D, which can be found on <a href="http://www.swisstopo.admin.ch/internet/swisstopo/de/home/products/landscape/swissBOUNDARIES3D.html" target="_blank">www.swisstopo.admin.ch</a>. 
@@ -97,6 +102,16 @@
                     <h4>Functionality</h2>
                 <p>
                     The map is zoom able and drag able with the user’s mouse. Hovering over a municipality shows the respective name and either the relevant data based on the chosen filter or, when there is no data to display, tells the user this fact. In the top right corner of the app the user is free to choose from different filters.</p>
+                
+                <h4>Filters</h4>
+
+<p>To make the app more informative and interactive, we developed different filters to show the data.
+Each filter can always be adjusted to selected days of week or to everyday in the week. <br />
+<i>Average last departure:</i> This filter shows the arithmetic average of the last departure of each station of a municipality. <br />
+<i>Last departure:</i> This view lets the user see, when the ultimate last departure in each municipality will be.<br />
+<i>Number of departures:</i> In this set of data, each and every departure has been counted and put into perspective for each municipality, a logarithmic scale has been implemented. <br/>
+    <i>Departures per person per Municipality:</i> In this specific filter, the relation between the inhabitants and the departures in each municipality is shown. A possible interpretation that is enabled by this data set, is the location of winter sport resorts, where far more departures per inhabitant occur than in more urban regions. This is due to the high offer during winter season in public transportation.</p>
+
                 </div>
             </div>            
         </div>

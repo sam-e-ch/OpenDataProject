@@ -27,6 +27,10 @@ $(document).ready(function(){
     $( window ).resize(function() {
         sptv.helpers.resize();   
     });
+    
+    $(function () {
+      $('[data-toggle="tooltip"]').tooltip();
+    });
 });
 
 sptv.constants = {
@@ -81,7 +85,7 @@ sptv.constants = {
                     },
                     "tooltip": function(id){
                         var r = sptv.constants.municipalityCountDepartures[sptv.activeLayer.filter].get(id);
-                        var t = r?(r/sptv.constants.municipalityPopulation.get(id)):"No data available.";
+                        var t = r?(Math.round(r/sptv.constants.municipalityPopulation.get(id)* 1000) / 1000):"No data available.";
                         return sptv.constants.municipalityName.get(id) + ': ' + t;
                     },
                     "mode" : "density",
